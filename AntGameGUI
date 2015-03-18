@@ -1,0 +1,310 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package antgame;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.Image;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.imageio.ImageIO;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JSlider;
+import javax.swing.border.EmptyBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
+/**
+ *
+ * @author Alex
+ */
+public class AntGameGUI {
+
+    public static void main(String[] args) {
+        AntGameGUI gui = new AntGameGUI();
+        gui.go();
+    }
+    JFrame twoPlayersFrame;
+    JFrame welcomeFrame;
+    JPanel contentPane;
+    JPanel topPanel;
+    JPanel rightPanel;
+    JPanel centerPanel;
+    JPanel leftPanel;
+    JPanel bottomPanel;
+    JLabel label;
+    JMenuBar menuBar;
+    JMenuItem newItem;
+    JMenuItem loadItem;
+    JMenuItem mainItem;
+    JMenuItem rulesItem;
+    JMenuItem creditsItem;
+
+    public AntGameGUI() {
+    }
+
+    private void go() {
+        welcomeFrame();
+        setup();
+        makeMenuBar();
+        twoPlayersFrame.pack();
+        twoPlayersFrame.setLocationRelativeTo(null);
+    }
+
+    private void welcomeFrame() {
+        welcomeFrame = new JFrame("The Ant Game");
+
+        Container welcomeContentPane = welcomeFrame.getContentPane();
+
+        JPanel welcomeTop = new JPanel();
+        welcomeContentPane.add(welcomeTop, BorderLayout.NORTH);
+        JLabel welcomeLabel = new JLabel("WELCOME");
+        welcomeLabel.setFont(new Font("Calibri", Font.PLAIN, 32));
+        welcomeLabel.setForeground(Color.RED);
+        welcomeTop.add(welcomeLabel);
+
+        JPanel welcomeCenter = new JPanel();
+        welcomeContentPane.add(welcomeCenter, BorderLayout.CENTER);
+//        welcomeCenter.add(new JLabel(new ImageIcon("resources/ant.jpg")));
+
+        JPanel welcomeBottom = new JPanel();
+        welcomeContentPane.add(welcomeBottom, BorderLayout.SOUTH);
+        welcomeBottom.setLayout(new FlowLayout());
+
+        JButton start = new JButton("Normal");
+        start.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                welcomeFrame.dispose();
+                twoPlayersFrame.setVisible(true);
+            }
+        });
+
+        JButton contest = new JButton("Contest");
+        contest.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                welcomeFrame.dispose();
+                twoPlayersFrame.setVisible(true);
+            }
+        });
+
+        JButton exit = new JButton("Exit");
+        exit.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.exit(0);
+            }
+        });
+
+        welcomeBottom.add(start);
+        welcomeBottom.add(contest);
+        welcomeBottom.add(exit);
+
+        welcomeFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        welcomeFrame.setResizable(false);
+        welcomeFrame.setVisible(true);
+        welcomeFrame.pack();
+        welcomeFrame.setLocationRelativeTo(null);
+    }
+
+    private void setup() {
+        //Set up the twoPlayersFrame
+        twoPlayersFrame = new JFrame("Ant Game");
+
+        //Set up the main panel
+        contentPane = new JPanel();
+        contentPane.setLayout(new BorderLayout());
+        twoPlayersFrame.add(contentPane);
+        contentPane.setBorder(new EmptyBorder(10, 10, 10, 10));
+
+        //Set up the center panel
+        centerPanel = new JPanel();
+        contentPane.add(centerPanel, BorderLayout.CENTER);
+
+        //Set up the right panel
+        rightPanel = new JPanel();
+        contentPane.add(rightPanel, BorderLayout.EAST);
+        rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.Y_AXIS));
+        createRightPanel();
+
+        //Set up the left panel
+        leftPanel = new JPanel();
+        contentPane.add(leftPanel, BorderLayout.WEST);
+        leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
+        createLeftPanel();
+
+        //Set up the top panel
+        topPanel = new JPanel();
+        contentPane.add(topPanel, BorderLayout.NORTH);
+
+        //Set up the bottom panel
+        bottomPanel = new JPanel();
+        contentPane.add(bottomPanel, BorderLayout.SOUTH);
+        bottomPanel.setLayout(new BorderLayout());
+        createSlider();
+
+        twoPlayersFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        twoPlayersFrame.setResizable(false);
+        twoPlayersFrame.setVisible(false);
+    }
+
+    private void makeMenuBar() {
+        menuBar = new JMenuBar();
+        twoPlayersFrame.setJMenuBar(menuBar);
+
+        //Create the Options Menu
+        JMenu optionsMenu = new JMenu("Options");
+        menuBar.add(optionsMenu);
+
+        newItem = new JMenuItem("New World");
+        optionsMenu.add(newItem);
+        newItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                twoPlayersFrame.invalidate();
+                twoPlayersFrame.validate();
+                twoPlayersFrame.repaint();
+                System.out.println("Hit");
+            }
+        });
+        loadItem = new JMenuItem("Load Brain");
+        optionsMenu.add(loadItem);
+        loadItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.out.println("Hit");
+            }
+        });
+
+        mainItem = new JMenuItem("Main Menu");
+        optionsMenu.add(mainItem);
+        mainItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                twoPlayersFrame.dispose();
+                welcomeFrame.setVisible(true);
+            }
+        });
+
+        //Create the Help Menu
+        JMenu helpMenu = new JMenu("Help");
+        menuBar.add(helpMenu);
+
+        rulesItem = new JMenuItem("Rules");
+        helpMenu.add(rulesItem);
+        rulesItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String rules = "These are the rules";
+                JOptionPane.showMessageDialog(null, rules, "Rules", JOptionPane.INFORMATION_MESSAGE);
+            }
+        });
+
+        creditsItem = new JMenuItem("Credits");
+        helpMenu.add(creditsItem);
+        creditsItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String credits = "These are the credits";
+                JOptionPane.showMessageDialog(null, credits, "Credits", JOptionPane.INFORMATION_MESSAGE);
+            }
+        });
+
+    }
+
+    private void createRightPanel() {
+        JLabel blackScore = new JLabel("<html>Black<br>Score</html>");
+        JLabel redScore = new JLabel("<html>Red<br>Score</html>");
+        rightPanel.add(blackScore);
+        rightPanel.add(Box.createRigidArea(new Dimension(0, 30)));
+        rightPanel.add(redScore);
+    }
+
+    private void createLeftPanel() {
+        JLabel gameNo = new JLabel("<html>Game Number:<br>Number</html>");
+        JLabel gamesWon = new JLabel("Games Won:");
+        JLabel playerOne = new JLabel("<html>Player 1:<br>Score</html>");
+        JLabel playerTwo = new JLabel("<html>Player 2:<br>Score</html>");
+        leftPanel.add(gameNo);
+        leftPanel.add(Box.createRigidArea(new Dimension(0, 30)));
+        leftPanel.add(gamesWon);
+        leftPanel.add(Box.createRigidArea(new Dimension(0, 30)));
+        leftPanel.add(playerOne);
+        leftPanel.add(Box.createRigidArea(new Dimension(0, 30)));
+        leftPanel.add(playerTwo);
+    }
+
+    private void createSlider() {
+        final JLabel gamePaceLabel = new JLabel("Game Speed: 10", JLabel.LEFT);
+        gamePaceLabel.setSize(200, 50);
+        JSlider slider = new JSlider(JSlider.HORIZONTAL, 0, 100, 10);
+        slider.addChangeListener(new ChangeListener() {
+            public void stateChanged(ChangeEvent e) {
+                gamePaceLabel.setText("Game Speed : "
+                        + ((JSlider) e.getSource()).getValue());
+            }
+        });
+        bottomPanel.add(slider, BorderLayout.WEST);
+        bottomPanel.add(gamePaceLabel, BorderLayout.SOUTH);
+        JPanel actionButtons = new JPanel();
+
+        //Create play button
+        actionButtons.setLayout(new FlowLayout());
+        final JButton playButton = new JButton("Play");
+        try {
+            Image img = ImageIO.read(getClass().getResource("resources/play.png"));
+            playButton.setIcon(new ImageIcon(img));
+        } catch (IOException ex) {
+            Logger.getLogger(AntGameGUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        final JButton pauseButton = new JButton("Pause");
+        try {
+            Image img = ImageIO.read(getClass().getResource("resources/pause.png"));
+            pauseButton.setIcon(new ImageIcon(img));
+        } catch (IOException ex) {
+            Logger.getLogger(AntGameGUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        playButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                playButton.setEnabled(false);
+                pauseButton.setEnabled(true);
+            }
+        });
+        actionButtons.add(playButton);
+
+        //Create pause button
+        pauseButton.setEnabled(false);
+        pauseButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                playButton.setEnabled(true);
+                pauseButton.setEnabled(false);
+            }
+        });
+        actionButtons.add(pauseButton);
+
+        bottomPanel.add(actionButtons, BorderLayout.EAST);
+    }
+}
