@@ -1,0 +1,62 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package antgame;
+
+/**
+ *
+ * @author Jason
+ */
+public class AntBrain {
+
+    /**
+     * @param args the command line arguments
+     */
+    String color;
+    int id;
+    int state;
+    int resting;
+    int direction = 0-6;
+    boolean has_food;
+    public static void main(String[] args) {
+        // TODO code application logic here
+    }
+    
+    private String other_color(String color){
+        return null;
+    }
+    
+    private int state(Ant a){
+        return 0;
+    }
+    
+    private int resting(Ant a){
+        return 0;
+    }
+    
+    private int direction(Ant a){
+        return 0;
+    }
+    
+    private boolean has_food(Ant a){
+        return true;
+    }
+    
+    private void set_state(Ant a,int s){
+        
+    }
+    
+    private void set_resting(Ant a, int r){
+        
+    }
+    
+    private void set_direction(Ant a, int d){
+        
+    } 
+    
+    private void set_has_food(Ant A){
+        
+    }    
+}
