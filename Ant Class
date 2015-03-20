@@ -1,23 +1,65 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
+ * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package antgame;
+package ant;
 
 /**
  *
- * @author Jason
+ * @author sw386
  */
-
 public class Ant {
-    private boolean cell_matches(int pos, String condition,String color){
-        return true;
+
+    /**
+     * @param args the command line arguments
+     */
+    Color color;
+    int id;
+    int state;
+    int resting;
+    int direction = 0 - 6;
+    boolean has_food;
+
+    public enum Color {
+
+        RED, BLACK
     }
-    private String get_instruction(String color, int state){
-        return null;
+
+    private Color other_color(Color c) {
+        switch (c) {
+            case RED:
+                return Color.BLACK;
+            case BLACK:
+                return Color.RED;
+        }
+        return null;//consider throwing an exception
     }
-    private int randomint(int n){
-        return 0;
+
+    private int state(Ant a) {
+        return state;
+    }
+
+    private int resting(Ant a) {
+        return resting;
+    }
+
+    private int direction(Ant a) {
+        return direction;
+    }
+
+    private boolean has_food(Ant a) {
+        return has_food;
+    }
+
+    public void set_state(Ant a, int s) {
+    }
+
+    public void set_resting(Ant a, int r) {
+    }
+
+    public void set_direction(Ant a, int d) {
+    }
+
+    public void set_has_food(Ant A) {
     }
 }
