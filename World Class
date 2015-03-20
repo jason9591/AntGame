@@ -1,0 +1,23 @@
+
+
+package ant_game;
+
+
+public class World {
+    int[][] pos;
+    int direction;
+    String left_or_right;
+    String sense_dir;
+    
+    public int[][] adjacent_cell(int[][] p, int d){
+        
+    }
+    
+    public int turn(String lr, int d){
+        
+    }
+    
+    public int[][] sense_cell(int[][] p, int d, String sd){
+        
+    }
+}
