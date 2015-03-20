@@ -11,7 +11,7 @@ package antgame;
  */
 
 public class Ant {
-    private boolean cell_matches(int p, String condition,String color){
+    private boolean cell_matches(int pos, String condition,String color){
         return true;
     }
     private String get_instruction(String color, int state){
