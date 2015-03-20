@@ -1,0 +1,63 @@
+
+package ant_game;
+
+
+public class Cell {
+
+    
+    public boolan rocky(int[][] p){
+        
+    }
+    
+    public boolean some_ant_is_at(int[][] p){
+        
+    }
+    
+    public int ant_at(int[][] p){
+        
+    }
+    
+    public void set_ant_at(int[][] p, int antID){
+        
+    }
+    
+    public void clear_ant_at(int[][] p){
+        
+    }
+    
+    public boolean ant_is_alive(int antID){
+        
+    }
+    
+    public int[][] find_ant(int antID){
+        
+    }
+    
+    public void kill_ant_ant(int[][] p){
+        
+    }
+    
+    public int food_at(int[][] p){
+        
+    }
+    
+    public void set_food_at(int[][] p, int NumOfFood){
+        
+    }
+    
+    public boolean anthill_at(int[][] p, String color){
+        
+    }
+    
+    public int adjacent_ants(int[][] p, String color){
+        
+    }
+    
+    public void check_for_surround(int[][] p){
+        
+    }
+    
+    public void check_for_surround_at(int[][] p){
+        
+    }
+}
