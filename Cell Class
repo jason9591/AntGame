@@ -1,115 +1,84 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package antgame;
 
-package ant_game;
-import ant_game.Ant.Color;
-import java.awt.Point;
+/**
+ *
+ * @author ap487
+ */
+public class Cell {
 
+    private final int x;
+    private final int y;
+    private boolean antAtCell;
+    private boolean hillAtCell;
+    private boolean isRocky;
+    private Ant ant;
+    private int amountOfFood;
+    private AntHill antHill;
 
-public class Cell extends World{
-    
-    public boolean rocky(Point p){
-        return (pos[(int)p.getX()][(int)p.getY()] == '#');
+    public Cell(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public boolean hasAnt() {
+        return antAtCell;
+    }
+
+    public void setAnt(Ant a) {
+        ant = a;
+        antAtCell = true;
+        //Consider whether we need to store the ant inside the cell class
+
+    }
+
+    public Ant getAnt() {
+        return ant;
+    }
+
+    public int getAmountOfFood() {
+        return amountOfFood;
+    }
+
+    public void set_food(int food) {
+        amountOfFood += food;
+    }
+
+    public void set_anthill(AntHill ah) {
+        antHill = ah;
+        hillAtCell = true;
+    }
+
+    public boolean has_anthill() {
+        return hillAtCell;
+    }
+
+    public AntHill getAntHill() {
+        return antHill;
     }
     
-    public boolean some_ant_is_at(Point p){
-        return (antAt[(int)p.getX()][(int)p.getY()] != null);
+    public void setRocky(){
+        isRocky = true;
     }
     
-    public Ant ant_at(Point p){
-        return antAt[(int)p.getX()][(int)p.getY()];
+    public boolean isRocky(){
+        return isRocky;
     }
-    
-    public void set_ant_at(Point p, int antID){
-        for(Ant find: ant)
-            if(find.id == antID)
-                antAt[(int)p.getX()][(int)p.getY()] = find;
-    }
-    
-    public void clear_ant_at(Point p){
-        antAt[(int)p.getX()][(int)p.getY()] = null;
-    }
-    
-    //not sure if its correct
-    public boolean ant_is_alive(int antID){
-        for(Ant[] i: antAt)
-            for(Ant j: i)
-                if (j.id == antID)
-                    return true;
-        return false;
-    }
-    
-    public Point find_ant(int antID){
-        int x = 0;
-        int y;
-        Point p = null;
-        for(Ant[] i: antAt)
-        {
-            y = 0;
-            for(Ant j: i)
-            {
-                if(j.id == antID)
-                    p = new Point(x, y);
-                y++;
-            }
-            x++;
-        }
-        return p;
-    }
-    
-    public void kill_ant_at(Point p){
-        clear_ant_at(p);
-    }
-    
-    public int food_at(Point p){
-        if(Character.isDigit(pos[(int)p.getX()][(int)p.getY()]))
-            return (int)pos[(int)p.getX()][(int)p.getY()];
-        else
-            return 0;
-    }
-    
-    public void set_food_at(Point p, int NumOfFood){
-        pos[(int)p.getX()][(int)p.getY()] = (char)NumOfFood;
-    }
-    
-    public boolean anthill_at(Point p, Color color){
-        switch (color) {
-            case Red:
-                return (pos[(int)p.getX()][(int)p.getY()] == '+');
-            case Black:
-                return (pos[(int)p.getX()][(int)p.getY()] == '-');
-            default:
-                return false;
-        }
-    }
-    
-    public int adjacent_ants(Point p, Color c){
-        int n = 0;
-        Point cel;
-        for(int d = 0; d < 6; d++)
-        {
-            cel = adjacent_cell(p, d);
-            if(some_ant_is_at(cel) && color(ant_at(cel)) == c)
-                n++;
-        }
-        return n;
-    }
-    
-    public void check_for_surrounded_ant_at(Point p){
-        Ant a = ant_at(p);
-        if(some_ant_is_at(p))
-        {
-            if (adjacent_ants(p, other_color(color(a))) >= 5)
-            {
-                kill_ant_at(p);
-                set_food_at(p, food_at(p) + 3 + food_at(p));
-            }
-        }
-    }
-    
-    public void check_for_surrounded_ants(Point p){
-        check_for_surrounded_ant_at(p);
-            for(int d = 0; d < 6; d++)
-            {
-                check_for_surrounded_ant_at(adjacent_cell(p,d));
-            }
+
+    public void clearAnt() {
+        ant = null;
+        antAtCell = false;
+        amountOfFood += 3;
     }
 }
