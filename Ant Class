@@ -15,14 +15,28 @@ public class Ant {
         RED,
         BLACK
     }
-
     Color color;
     int id;
     int state;
     int resting; //keeps track of how long the ant has to rest after its last move before any other action.
     int direction;
     boolean has_food;
+    Cell cell;
+    World world;
 
+    public Ant(World w, Cell c){
+        world = w;
+        cell = c;
+    }
+
+    public Cell getCell() {
+        return cell;
+    }
+    
+    public int getId() {
+        return id;
+    }
+    
     private Color other_color(Color c) {
         switch (c) {
             case RED:
@@ -30,7 +44,7 @@ public class Ant {
             case BLACK:
                 return Color.RED;
         }
-        return null;//consider throwing an exception
+        return null; //consider throwing an exception
     }
 
     private int state(Ant a) {
@@ -60,13 +74,47 @@ public class Ant {
     public void set_direction(Ant a, int d) {
         if (d > 0 && d < 7) {
             direction = d;
-        }
-        else{
+        } else {
             System.out.println("Can't set direction"); //Consider throwing an exception
         }
     }
 
     public void set_has_food(Ant a, boolean b) {
         has_food = b;
+    }
+
+    public int adjacent_ants(Cell p, Color c) {
+        int n = 0;
+        for (int d = 0; d < 6; d++) {
+            Cell cel = world.adjacent_cell(p, d);
+            if (world.some_ant_is_at(cel) && (world.ant_at(cel)).color == c) {
+                n++;
+            }
+        }
+        return n;
+    }
+
+    public void check_for_surrounded_ant_at(Cell p) {
+        int i;
+        if (world.some_ant_is_at(p)) {
+            Ant a = world.ant_at(p);
+            if (adjacent_ants(p, other_color(a.color)) >= 5) {
+                world.kill_ant_at(p);
+                if (has_food(a)) {
+                    i = 1;
+                } else {
+                    i = 0;
+                }
+                world.set_food_at(p, world.food_at(p) + 3 + i);
+            }
+
+        }
+    }
+
+    public void check_for_surrounded_ants(Cell p) {
+        check_for_surrounded_ant_at(p);
+        for (int d = 0; d < 6; d++) {
+            check_for_surrounded_ant_at(world.adjacent_cell(p, d));
+        }
     }
 }
