@@ -14,7 +14,9 @@ import java.awt.Font;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
@@ -22,6 +24,7 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -44,7 +47,8 @@ public class AntGameGUI {
         AntGameGUI gui = new AntGameGUI();
         gui.go();
     }
-    JFrame twoPlayersFrame;
+
+    JFrame gameFrame;
     JFrame welcomeFrame;
     JPanel contentPane;
     JPanel topPanel;
@@ -52,26 +56,22 @@ public class AntGameGUI {
     JPanel centerPanel;
     JPanel leftPanel;
     JPanel bottomPanel;
-    JLabel label;
+    JLabel infoLabel;
+    JButton playButton;
+    JButton pauseButton;
     JMenuBar menuBar;
     JMenuItem newItem;
     JMenuItem loadItem;
     JMenuItem mainItem;
     JMenuItem rulesItem;
     JMenuItem creditsItem;
+    boolean normalGame;
+    boolean contestGame;
 
     public AntGameGUI() {
     }
 
     private void go() {
-        welcomeFrame();
-        setup();
-        makeMenuBar();
-        twoPlayersFrame.pack();
-        twoPlayersFrame.setLocationRelativeTo(null);
-    }
-
-    private void welcomeFrame() {
         welcomeFrame = new JFrame("The Ant Game");
 
         Container welcomeContentPane = welcomeFrame.getContentPane();
@@ -95,8 +95,11 @@ public class AntGameGUI {
         start.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                normalGame = true;
+                contestGame = false;
                 welcomeFrame.dispose();
-                twoPlayersFrame.setVisible(true);
+                setup();
+                gameFrame.setVisible(true);
             }
         });
 
@@ -104,8 +107,11 @@ public class AntGameGUI {
         contest.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                contestGame = true;
+                normalGame = false;
                 welcomeFrame.dispose();
-                twoPlayersFrame.setVisible(true);
+                setup();
+                gameFrame.setVisible(true);
             }
         });
 
@@ -129,14 +135,17 @@ public class AntGameGUI {
     }
 
     private void setup() {
-        //Set up the twoPlayersFrame
-        twoPlayersFrame = new JFrame("Ant Game");
+        //Set up the gameFrame
+        gameFrame = new JFrame("Ant Game");
+        infoLabel = new JLabel("Load ant brain to get started");
+        pauseButton = new JButton("Pause");
+        playButton = new JButton("Play");
 
         //Set up the main panel
         contentPane = new JPanel();
         contentPane.setLayout(new BorderLayout());
-        twoPlayersFrame.add(contentPane);
-        contentPane.setBorder(new EmptyBorder(10, 10, 10, 10));
+        gameFrame.add(contentPane);
+        contentPane.setBorder(new EmptyBorder(0, 10, 10, 10));
 
         //Set up the center panel
         centerPanel = new JPanel();
@@ -146,32 +155,45 @@ public class AntGameGUI {
         rightPanel = new JPanel();
         contentPane.add(rightPanel, BorderLayout.EAST);
         rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.Y_AXIS));
-        createRightPanel();
+        if (contestGame) {
+            contestRightPanel();
+        } else {
+            rightPanel.add(new JLabel(""));
+        }
 
         //Set up the left panel
         leftPanel = new JPanel();
         contentPane.add(leftPanel, BorderLayout.WEST);
         leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
-        createLeftPanel();
+        if (contestGame) {
+            contestLeftPanel();
+        } else {
+            normalLeftPanel();
+        }
 
         //Set up the top panel
         topPanel = new JPanel();
         contentPane.add(topPanel, BorderLayout.NORTH);
+        topPanel.add(infoLabel);
 
         //Set up the bottom panel
         bottomPanel = new JPanel();
         contentPane.add(bottomPanel, BorderLayout.SOUTH);
         bottomPanel.setLayout(new BorderLayout());
+
+        makeMenuBar();
         createSlider();
 
-        twoPlayersFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        twoPlayersFrame.setResizable(false);
-        twoPlayersFrame.setVisible(false);
+        gameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        gameFrame.setResizable(false);
+        gameFrame.setVisible(false);
+        gameFrame.pack();
+        gameFrame.setLocationRelativeTo(null);
     }
 
     private void makeMenuBar() {
         menuBar = new JMenuBar();
-        twoPlayersFrame.setJMenuBar(menuBar);
+        gameFrame.setJMenuBar(menuBar);
 
         //Create the Options Menu
         JMenu optionsMenu = new JMenu("Options");
@@ -182,9 +204,9 @@ public class AntGameGUI {
         newItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                twoPlayersFrame.invalidate();
-                twoPlayersFrame.validate();
-                twoPlayersFrame.repaint();
+                gameFrame.invalidate();
+                gameFrame.validate();
+                gameFrame.repaint();
                 System.out.println("Hit");
             }
         });
@@ -193,7 +215,26 @@ public class AntGameGUI {
         loadItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("Hit");
+                final JFileChooser fc = new JFileChooser();
+                int val = fc.showOpenDialog(gameFrame);
+                if (val == JFileChooser.APPROVE_OPTION) {
+                    try {
+                        Scanner reader = new Scanner(fc.getSelectedFile());
+                        playButton.setEnabled(true);
+                        if(contestGame){
+                            infoLabel.setText("Contest");
+                        }
+                        else{
+                            infoLabel.setText("Normal Game");
+                        }
+                    } catch (FileNotFoundException ex) {
+                        System.out.println("No file selected");
+                    }
+                }
+                if (val == JFileChooser.CANCEL_OPTION) {
+                    System.out.println("You pressed cancel");
+                }
+
             }
         });
 
@@ -202,7 +243,7 @@ public class AntGameGUI {
         mainItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                twoPlayersFrame.dispose();
+                gameFrame.dispose();
                 welcomeFrame.setVisible(true);
             }
         });
@@ -233,26 +274,36 @@ public class AntGameGUI {
 
     }
 
-    private void createRightPanel() {
-        JLabel blackScore = new JLabel("<html>Black<br>Score</html>");
-        JLabel redScore = new JLabel("<html>Red<br>Score</html>");
-        rightPanel.add(blackScore);
-        rightPanel.add(Box.createRigidArea(new Dimension(0, 30)));
-        rightPanel.add(redScore);
-    }
-
-    private void createLeftPanel() {
+    private void contestRightPanel() {
         JLabel gameNo = new JLabel("<html>Game Number:<br>Number</html>");
         JLabel gamesWon = new JLabel("Games Won:");
         JLabel playerOne = new JLabel("<html>Player 1:<br>Score</html>");
         JLabel playerTwo = new JLabel("<html>Player 2:<br>Score</html>");
-        leftPanel.add(gameNo);
+        rightPanel.add(gameNo);
+        rightPanel.add(Box.createRigidArea(new Dimension(0, 30)));
+        rightPanel.add(gamesWon);
+        rightPanel.add(Box.createRigidArea(new Dimension(0, 30)));
+        rightPanel.add(playerOne);
+        rightPanel.add(Box.createRigidArea(new Dimension(0, 30)));
+        rightPanel.add(playerTwo);
+        rightPanel.add(Box.createRigidArea(new Dimension(0, 30)));
+
+    }
+
+    private void contestLeftPanel() {
+        JLabel blackScore = new JLabel("<html>Black<br>Score</html>");
+        JLabel redScore = new JLabel("<html>Red<br>Score</html>");
+        leftPanel.add(blackScore);
         leftPanel.add(Box.createRigidArea(new Dimension(0, 30)));
-        leftPanel.add(gamesWon);
+        leftPanel.add(redScore);
+    }
+
+    private void normalLeftPanel() {
+        JLabel blackScore = new JLabel("<html>Black<br>Score</html>");
+        JLabel redScore = new JLabel("<html>Red<br>Score</html>");
+        leftPanel.add(blackScore);
         leftPanel.add(Box.createRigidArea(new Dimension(0, 30)));
-        leftPanel.add(playerOne);
-        leftPanel.add(Box.createRigidArea(new Dimension(0, 30)));
-        leftPanel.add(playerTwo);
+        leftPanel.add(redScore);
     }
 
     private void createSlider() {
@@ -269,22 +320,18 @@ public class AntGameGUI {
         bottomPanel.add(gamePaceLabel, BorderLayout.SOUTH);
         JPanel actionButtons = new JPanel();
 
-        //Create play button
+        //Create buttons
         actionButtons.setLayout(new FlowLayout());
-        final JButton playButton = new JButton("Play");
+        
+        
+        //Initialize play button
         try {
             Image img = ImageIO.read(getClass().getResource("resources/play.png"));
             playButton.setIcon(new ImageIcon(img));
         } catch (IOException ex) {
             Logger.getLogger(AntGameGUI.class.getName()).log(Level.SEVERE, null, ex);
         }
-        final JButton pauseButton = new JButton("Pause");
-        try {
-            Image img = ImageIO.read(getClass().getResource("resources/pause.png"));
-            pauseButton.setIcon(new ImageIcon(img));
-        } catch (IOException ex) {
-            Logger.getLogger(AntGameGUI.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        playButton.setEnabled(false);
         playButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -294,7 +341,13 @@ public class AntGameGUI {
         });
         actionButtons.add(playButton);
 
-        //Create pause button
+        //Initialize pause button
+        try {
+            Image img = ImageIO.read(getClass().getResource("resources/pause.png"));
+            pauseButton.setIcon(new ImageIcon(img));
+        } catch (IOException ex) {
+            Logger.getLogger(AntGameGUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
         pauseButton.setEnabled(false);
         pauseButton.addActionListener(new ActionListener() {
             @Override
