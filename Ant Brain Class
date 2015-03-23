@@ -4,23 +4,89 @@
  */
 package ant;
 
+import ant.Ant.Color;
+
 /**
  *
  * @author sw386
  */
-public class Ant_Brain {
+public class Ant_Brain extends Cell {
+
+    public enum condition {
+
+        Friend, Foe, FriendWithFood, FoeWithFood, Food, Rock, Marker, FoeMarker, Home, FoeHome
+    }
 
     /**
      * @param args the command line arguments
-     */    
-     public  boolean cell_matches(int pos, String condition,String color){
+     */
+    public boolean cell_matches(int pos, condition cond, Color color) {
+        if rocky(pos)   {
+            if cond.equals("Rock")      {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            switch (cond) {
+                case Friend:
+                    if (some_ant_is_at(pos)&&color(ant_at(p))== color){
+                        return true;
+                    }
+                    else {
+                        return false;
+                    }
+                case Foe:
+                    if (some_ant_is_at(pos)&&color(ant_at(p))<> color){
+                        return true;
+                    }
+                    else {
+                        return false;
+                    }
+                case FriendWithFood:
+                    if(some_ant_is_at(pos)&&color(ant_at(pos))&&has_food(ant_at(p))){
+                        return true;
+                    }
+                    else{
+                        return false;
+                    }
+                case FoeWithFood:
+                    if (some_ant_is_at(pos) && color(ant_at(pos)) < > color && has_food(ant_at(pos))) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                case Food:
+                    if (food_at(pos) > 0) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                case Rock:
+                    return false;
+                case Marker:
+                    //do not know how to implement
+                    return true;
+                case FoeMarker:
+                    check_any_marker_at(pos, other_color(color));
+                    return true;
+                case Home:
+                    anthill_at(pos, color);
+                    return true;
+                case FoeHome:
+                    anthill_at(pos, other_color(color));
+                    return true;
+
+            }
+        }
         return true;
     }
-    public String get_instruction(String color, int state){
+
+    public String get_instruction(String color, int state) {
         return null;
     }
-    public int randomint(int n){
-        return 0;
-    }  
-}
 
+    public int randomint(int n) {
+        return 0;
+    }
+}
