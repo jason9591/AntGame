@@ -1,0 +1,97 @@
+class Instructions {
+    int st;
+    public Instructions(int st){
+        this.st = st;
+    }
+}
+
+class Sense extends Instructions {
+    enum Dir{
+        Here,
+        Ahead,
+        LeftAhead,
+        RightAhead;
+    }
+    class Cond{
+        class Friend extends Cond{};
+        class Foe extends Cond{};
+        class FriendWithFood extends Cond{};
+        class FoeWithFood extends Cond{};
+        class Food extends Cond{};
+        class Rock extends Cond{};
+        class Marker extends Cond{};
+        class FoeMarker extends Cond{};
+        class Home extends Cond{};
+        class FoeHome extends Cond{};
+    }
+    Dir sensedir;
+    int st2;
+    Cond cond;
+    public Sense(Dir sensedir, int st, int st2, Cond cond){
+        super(st);
+        sensedir = this.sensedir;
+        this.st2 = st2;
+        this.cond = cond;
+        
+    }
+}
+
+class Mark extends Instructions {
+    int i;
+    public Mark(int i, int st){
+        super(st);
+        this.i = i;
+    }
+}
+
+class Unmark extends Instructions {
+    int i;
+    public Unmark(int i, int st){
+        super(st);
+        this.i = i;
+    }
+}
+
+class PickUp extends Instructions {
+    int st2;
+    public PickUp(int st1, int st2){
+        super(st1);
+        this.st2 = st2;
+    }
+}
+
+class Drop extends Instructions {
+    public Drop(int st){
+        super(st);
+    }
+}
+
+class Turn extends Instructions {
+    enum left_right{
+        Left,
+        Right;
+    }
+    left_right lr;
+    public Turn(int st, left_right lr){
+        super(st);
+        this.lr = lr;
+    }
+}
+
+class Move extends Instructions {
+    int st2;
+    public Move(int st, int st2){
+        super(st);
+        this.st2 = st2;
+    }
+}
+
+class Flip extends Instructions {
+    int p;
+    int st2;
+    public Flip(int p, int st, int st2){
+        super(st);
+        this.st2 = st2;
+        this.p = p;
+    }
+}
