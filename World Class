@@ -1,29 +1,151 @@
+package antgame;
 
-package ant_game;
-import java.awt.Point;
 import java.util.ArrayList;
 
-
 public class World {
-    char[][] pos;
-    Ant[][] antAt;
-    Ant[] ant;
-    int dir;
-    enum left_or_right{Left, Right}
-    enum sense_dir{Here, Ahead, LeftAhead, RightAhead}
-    
-    public Point adjacent_cell(Point p, int d){
-        Point adj = null;
-        return adj;
+
+    private int dir;
+    private ArrayList<Ant> ants = new ArrayList<>();
+
+    public enum left_or_right {
+
+        LEFT, RIGHT
+    };
+
+    public enum sense_dir {
+
+        HERE, AHEAD, LEFTAHEAD, RIGHTAHEAD
+    };
+
+    public Cell adjacent_cell(Cell p, int d) {
+        int currentX = p.getX();
+        int currentY = p.getY();
+        Cell newCell = null; //Initialize new Cellition variable
+        switch (d) {
+            case 0:
+                newCell = new Cell(currentX + 1, currentY);
+                break;
+            case 1:
+                if (currentX % 2 == 0 && currentY % 2 == 0) {
+                    newCell = new Cell(currentX, currentY + 1);
+                } else {
+                    newCell = new Cell(currentX + 1, currentY + 1);
+                }
+                break;
+            case 2:
+                if (currentX % 2 == 0 && currentY % 2 == 0) {
+                    newCell = new Cell(currentX - 1, currentY + 1);
+                } else {
+                    newCell = new Cell(currentX, currentY + 1);
+                }
+                break;
+            case 3:
+                newCell = new Cell(currentX - 1, currentY);
+                break;
+            case 4:
+                if (currentX % 2 == 0 && currentY % 2 == 0) {
+                    newCell = new Cell(currentX - 1, currentY - 1);
+                } else {
+                    newCell = new Cell(currentX, currentY - 1);
+                }
+                break;
+            case 5:
+                if (currentX % 2 == 0 && currentY % 2 == 0) {
+                    newCell = new Cell(currentX, currentY - 1);
+                } else {
+                    newCell = new Cell(currentX + 1, currentY - 1);
+                }
+                break;
+            default:
+                System.out.println("Invalid direction");
+                break;
+        }
+        return newCell;
     }
-    
-    public int turn(String lr, int d){
-        int dir = 0;
-        return dir;
+
+    public int turn(left_or_right lr, int d) {
+        int adjustedDir = -1;
+        switch (lr) {
+            case LEFT:
+                adjustedDir = (d + 5) % 6;
+                break;
+            case RIGHT:
+                adjustedDir = (d + 1) % 6;
+        }
+        return adjustedDir;
     }
-    
-    public Point sense_cell(Point p, int d, String sd){
-        Point sense = null;
-        return sense;
+
+    public Cell sensed_cell(Cell p, int d, sense_dir sd) {
+        Cell sensed_cell = null;
+        switch (sd) {
+            case HERE:
+                sensed_cell = p;
+                break;
+            case AHEAD:
+                sensed_cell = adjacent_cell(p, d);
+                break;
+            case LEFTAHEAD:
+                sensed_cell = adjacent_cell(p, turn(left_or_right.LEFT, d));
+                break;
+            case RIGHTAHEAD:
+                sensed_cell = adjacent_cell(p, turn(left_or_right.RIGHT, d));
+                break;
+        }
+        return sensed_cell;
+
+    }
+
+    public boolean rocky(Cell p) {
+        return p.isRocky();
+    }
+
+    public boolean some_ant_is_at(Cell p) {
+        return p.hasAnt();
+    }
+
+    public Ant ant_at(Cell p) {
+        return p.getAnt();
+    }
+
+    public void set_ant_at(Cell p, Ant a) {
+        p.setAnt(a);
+    }
+
+    public void clear_ant_at(Cell p) {
+        p.clearAnt();
+    }
+
+    public boolean ant_is_alive(int id) {
+        for (Ant a : ants) {
+            if (a.getId() == id) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public Cell find_ant(int id) {
+        for (Ant a : ants) {
+            if (a.getId() == id) {
+                return a.getCell();
+            }
+        }
+        return null;
+    }
+
+    public void kill_ant_at(Cell p) {
+        clear_ant_at(p);
+    }
+
+    public int food_at(Cell p) {
+        return p.getAmountOfFood();
+    }
+
+    public void set_food_at(Cell p, int f) {
+        p.set_food(f);
+    }
+
+    public boolean anthill_at(Cell p, AntHill.Color c) {
+        return p.has_anthill() && c == p.getAntHill().getColor();
     }
 }
