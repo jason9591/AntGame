@@ -4,6 +4,8 @@
  */
 package antgame;
 
+import antgame.Ant.Color;
+
 /**
  *
  * @author ap487
@@ -18,6 +20,8 @@ public class Cell {
     private Ant ant;
     private int amountOfFood;
     private AntHill antHill;
+    private final Marker[] redMarker = new Marker[5];
+    private final Marker[] blackMarker = new Marker[5];
 
     public Cell(int x, int y) {
         this.x = x;
@@ -80,5 +84,69 @@ public class Cell {
         ant = null;
         antAtCell = false;
         amountOfFood += 3;
+    }
+    
+    public void set_marker_at(Color c, Marker i)
+    {
+        switch(c){
+            case RED:
+                redMarker[i.getType()] = i;
+                break;
+            case BLACK:
+                blackMarker[i.getType()] = i;
+                break;
+        }
+    }
+    
+    public void clear_marker_at(Color c, Marker i)
+    {
+        switch(c){
+            case RED:
+                redMarker[i.getType()] = null;
+                break;
+            case BLACK:
+                blackMarker[i.getType()] = null;
+                break;
+        }
+    }
+    
+    public boolean check_marker_at(Color c, Marker i)
+    {
+        switch(c){
+            case RED:
+                if(redMarker[i.getType()] != null)
+                    return true;
+                break;
+            case BLACK:
+                if(blackMarker[i.getType()] != null)
+                    return true;
+                break;        
+        }
+        return false;
+    }
+    
+    public boolean check_any_marker_at(Color c)
+    {
+        int i = 0;
+        boolean found = false;
+        switch(c){
+            
+            case RED:
+                while(!found && i < 6){
+                    if(redMarker[i] != null)
+                        found = true;
+                    i++;
+                }
+                break;
+                
+            case BLACK:
+                while(!found && i < 6){
+                    if(blackMarker[i] != null)
+                        found = true;
+                    i++;
+                }
+                break;        
+        }
+        return found;
     }
 }
