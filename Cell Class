@@ -4,7 +4,7 @@
  */
 package antgame;
 
-import antgame.Ant.Color;
+import antgame.AntHill.Color;
 
 /**
  *
