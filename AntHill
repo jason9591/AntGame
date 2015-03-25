@@ -12,11 +12,12 @@ public class AntHill {
 
     private Color color;
     private Cell cell;
-
+    
     public enum Color {
         RED,
         BLACK
     }
+
 
     public AntHill(Cell cell, Color color) {
         this.cell = cell;
