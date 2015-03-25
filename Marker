@@ -1,0 +1,36 @@
+
+package antgame;
+
+import antgame.Ant.Color;
+
+
+public class Marker{
+    private final int markerType;
+    
+    public Marker(int type){
+        markerType = type;
+    }
+    
+    public void set_marker_at(Cell p, Color c, Marker i)
+    {
+        p.set_marker_at(c, i);
+    }
+    
+    public void clear_marker_at(Cell p, Color c, Marker i)
+    {
+        p.clear_marker_at(c, i);
+    }
+    
+    public boolean check_marker_at(Cell p, Color c, Marker i)
+    {
+        return p.check_marker_at(c, i);
+    }
+    
+    public boolean check_any_marker_at(Cell p, Color c){
+        return p.check_any_marker_at(c);
+    }
+    
+    public int getType(){
+        return markerType;
+    }
+}
