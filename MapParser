@@ -1,0 +1,74 @@
+package antgame;
+
+import java.io.*;
+
+public class MapParser {
+
+    int x; //The x length of the map
+    int y; //The y length of the map
+    String[][] stringArray; //A two dimensional array to store the map
+
+//    public static void main(String[] args) throws FileNotFoundException, IOException {
+//        MapParser mp = new MapParser();
+//        mp.readFile("src/world/world1");
+//        mp.printWorld();
+//    }
+
+    private void readFile(String pathName) throws FileNotFoundException, IOException {
+        int n = 0; //Counter to read the numbers
+        BufferedReader br = new BufferedReader(new FileReader(pathName));
+        String line;
+        while ((line = br.readLine()) != null) {
+            if (n == 0) {
+                x = Integer.parseInt(line);
+            } else if (n == 1) {
+                y = Integer.parseInt(line);
+                stringArray = new String[x][y];
+            } else if (n > 1) {
+                parseLine(line, n - 2);
+            }
+            n++;
+        }
+    }
+
+    private void parseLine(String line, int y) {
+        int i = 0;
+        char[] row = line.toCharArray();
+        for (int j = 0; j < row.length; j++) {
+            switch (row[j]) {
+                case '#':
+                    stringArray[i][y] = "#";
+                    i++;
+                    break;
+                case '.':
+                    stringArray[i][y] = ".";
+                    i++;
+                    break;
+                case '+':
+                    stringArray[i][y] = "+";
+                    i++;
+                    break;
+                case '-':
+                    stringArray[i][y] = "-";
+                    i++;
+                    break;
+            }
+            if (Character.isDigit(row[j])) {
+                stringArray[i][y] = ((Integer) Character.getNumericValue(row[j])).toString();
+                i++;
+            }
+        }
+    }
+
+    public void printWorld() {
+        for (int i = 0; i < stringArray.length; i++) {
+            for (int j = 0; j < stringArray[i].length; j++) {
+                System.out.print(stringArray[i][j]);
+                if (j < stringArray[i].length - 1) {
+                    System.out.print(" ");
+                }
+            }
+            System.out.println();
+        }
+    }
+} 
