@@ -88,11 +88,23 @@ public class Ant_Brain{
         return true;
     }
 
-    public Instruction get_instruction(Color color, int state) {
+    public Instructions get_instruction(Color color, int state) {
         return null;
     }
 
-    public int randomint(int n) {
-        return 0;
+    public int[] randomint(int n) {
+       int[] seed =  new int[n];
+       int[] x = new int[n];
+       seed[0] = 12345;
+       for(int i =1; i <n; i++){
+           seed[i] = seed[i-1]*22695477+1;
+       }
+       for (int j =0; j<n; j++){
+           x[j] = (seed[j+4]/65536)% 16384;
+       }
+       for (int z = 0; z < n; z++){
+           x[z] = x[z]%n;           
+       }       
+       return x;
     }
 }
