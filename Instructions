@@ -1,32 +1,24 @@
-class Instructions {
+package antgame;
+
+class Instruction {
     int st;
-    public Instructions(int st){
+    public Instruction(int st){
         this.st = st;
     }
 }
 
-class Sense extends Instructions {
+class Sense extends Instruction {
     enum Dir{
         Here,
         Ahead,
         LeftAhead,
         RightAhead;
     }
-    class Cond{
-        class Friend extends Cond{};
-        class Foe extends Cond{};
-        class FriendWithFood extends Cond{};
-        class FoeWithFood extends Cond{};
-        class Food extends Cond{};
-        class Rock extends Cond{};
-        class Marker extends Cond{};
-        class FoeMarker extends Cond{};
-        class Home extends Cond{};
-        class FoeHome extends Cond{};
-    }
+
     Dir sensedir;
     int st2;
     Cond cond;
+    
     public Sense(Dir sensedir, int st, int st2, Cond cond){
         super(st);
         sensedir = this.sensedir;
@@ -36,7 +28,7 @@ class Sense extends Instructions {
     }
 }
 
-class Mark extends Instructions {
+class Mark extends Instruction {
     int i;
     public Mark(int i, int st){
         super(st);
@@ -44,7 +36,7 @@ class Mark extends Instructions {
     }
 }
 
-class Unmark extends Instructions {
+class Unmark extends Instruction {
     int i;
     public Unmark(int i, int st){
         super(st);
@@ -52,7 +44,7 @@ class Unmark extends Instructions {
     }
 }
 
-class PickUp extends Instructions {
+class PickUp extends Instruction {
     int st2;
     public PickUp(int st1, int st2){
         super(st1);
@@ -60,25 +52,25 @@ class PickUp extends Instructions {
     }
 }
 
-class Drop extends Instructions {
+class Drop extends Instruction {
     public Drop(int st){
         super(st);
     }
 }
 
-class Turn extends Instructions {
+class Turn extends Instruction {
     enum left_right{
-        Left,
-        Right;
+        LEFT,
+        RIGHT;
     }
     left_right lr;
-    public Turn(int st, left_right lr){
+    public Turn(left_right lr, int st){
         super(st);
         this.lr = lr;
     }
 }
 
-class Move extends Instructions {
+class Move extends Instruction {
     int st2;
     public Move(int st, int st2){
         super(st);
@@ -86,7 +78,7 @@ class Move extends Instructions {
     }
 }
 
-class Flip extends Instructions {
+class Flip extends Instruction {
     int p;
     int st2;
     public Flip(int p, int st, int st2){
