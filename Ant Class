@@ -3,18 +3,16 @@
  * and open the template in the editor.
  */
 package antgame;
+import antgame.AntHill.Color;
+
+
 
 /**
  *
  * @author sw386
  */
 public class Ant {
-
-    public enum Color {
-
-        RED,
-        BLACK
-    }
+   
     Color color;
     int id;
     int state;
@@ -37,7 +35,7 @@ public class Ant {
         return id;
     }
     
-    private Color other_color(Color c) {
+    public Color other_color(Color c) {
         switch (c) {
             case RED:
                 return Color.BLACK;
