@@ -2,15 +2,21 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package ant;
+package antgame;
 
-import ant.Ant.Color;
+import antgame.AntHill.Color;
 
 /**
  *
  * @author sw386
  */
-public class Ant_Brain extends Cell {
+public class Ant_Brain{
+    
+    Cell cell;
+    World world;
+    Ant ant;
+    Marker marker;
+    AntHill anthill;
 
     public enum condition {
 
@@ -20,44 +26,42 @@ public class Ant_Brain extends Cell {
     /**
      * @param args the command line arguments
      */
-    public boolean cell_matches(int pos, condition cond, Color color) {
-        if rocky(pos)   {
-            if cond.equals("Rock")      {
+    public boolean cell_matches(Cell pos, condition cond, Color c) {
+        if (world.rocky(pos)) {
+            if (cond == condition.Rock) {
+
                 return true;
             } else {
                 return false;
-            }
-        } else {
+            }  
+        }else {
             switch (cond) {
                 case Friend:
-                    if (some_ant_is_at(pos)&&color(ant_at(p))== color){
+                    if (world.some_ant_is_at(pos) && (world.ant_at(pos).color) == c) {
                         return true;
-                    }
-                    else {
+                    } else {
                         return false;
                     }
                 case Foe:
-                    if (some_ant_is_at(pos)&&color(ant_at(p))<> color){
+                    if (world.some_ant_is_at(pos) && (world.ant_at(pos).color) != c) {
                         return true;
-                    }
-                    else {
+                    } else {
                         return false;
                     }
                 case FriendWithFood:
-                    if(some_ant_is_at(pos)&&color(ant_at(pos))&&has_food(ant_at(p))){
+                    if (world.some_ant_is_at(pos) && (world.ant_at(pos).color) == c && (world.ant_at(pos).has_food)) {
                         return true;
-                    }
-                    else{
+                    } else {
                         return false;
                     }
                 case FoeWithFood:
-                    if (some_ant_is_at(pos) && color(ant_at(pos)) < > color && has_food(ant_at(pos))) {
+                    if (world.some_ant_is_at(pos) && (world.ant_at(pos).color) != c && (world.ant_at(pos).has_food)) {
                         return true;
                     } else {
                         return false;
                     }
                 case Food:
-                    if (food_at(pos) > 0) {
+                    if (world.food_at(pos) > 0) {
                         return true;
                     } else {
                         return false;
@@ -65,24 +69,26 @@ public class Ant_Brain extends Cell {
                 case Rock:
                     return false;
                 case Marker:
-                    //do not know how to implement
+                    marker.set_marker_at(pos, c, marker);
                     return true;
                 case FoeMarker:
-                    check_any_marker_at(pos, other_color(color));
+                    marker.check_any_marker_at(pos, ant.other_color(c));
                     return true;
                 case Home:
-                    anthill_at(pos, color);
+                    anthill= new AntHill(pos,c);
+                    cell.set_anthill(anthill);
                     return true;
                 case FoeHome:
-                    anthill_at(pos, other_color(color));
+                    anthill = new AntHill(pos, ant.other_color(c));
+                    cell.set_anthill(anthill);
                     return true;
-
             }
         }
+
         return true;
     }
 
-    public String get_instruction(String color, int state) {
+    public Instruction get_instruction(Color color, int state) {
         return null;
     }
 
