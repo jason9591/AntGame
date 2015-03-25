@@ -1,0 +1,120 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package antgame;
+
+import java.io.*;
+
+/**
+ *
+ * @author bps23
+ */
+public class AntBrainParser {
+
+    Instructions instruction;
+    Instructions.Dir dir;
+    Cond cond;
+    AntBrain brain;
+
+    private void readFile(String pathName) throws FileNotFoundException, IOException {
+        int n = 0; //Counter to read the numbers
+        BufferedReader br = new BufferedReader(new FileReader(pathName));
+        String line;
+        while ((line = br.readLine()) != null) {
+
+            n++;
+        }
+
+    }
+
+    private void parseLine(String line, int y) {
+        int i;
+        int st;
+        int st1;
+        int st2;
+        int p;
+        Instructions.left_right lr;
+
+        String[] row = line.split(" ");
+        for (int j = 0; j < row.length; j++) {
+            switch (row[0]) {
+                case "Sense":
+                    Instructions.Dir sensedir = new Instructions.Dir(row[1]);
+                    st1 = Integer.parseInt(row[2]);
+                    st2 = Integer.parseInt(row[3]);
+                    switch (row[4]) {
+                        case "Friend":
+                            cond = new Friend();
+                            break;
+                        case "Foe":
+                            cond = new Foe();
+                            break;
+                        case "FriendWithFood":
+                            cond = new FriendWithFood();
+                            break;
+                        case "Food":
+                            cond = new Food();
+                            break;
+                        case "Rock":
+                            cond = new Rock();
+                            break;
+                        case "Marker":
+                            cond = new Marker(Integer.parseInt(row[5]));
+                            break;
+                        case "Home":
+                            cond = new Home();
+                            break;
+                        case "FoeHome":
+                            cond = new FoeHome();
+                            break;
+                    }
+                    instruction = new Instructions.Sense(sensedir, st1, st2, cond);
+                    break;
+                case "Mark":
+                    i = Integer.parseInt(row[1]);
+                    st = Integer.parseInt(row[2]);
+                    instruction = new Instructions.Mark(i, st);
+                    break;
+                case "Unmark":
+                    i = Integer.parseInt(row[1]);
+                    st = Integer.parseInt(row[2]);
+                    instruction = new Instructions.Unmark(i, st);
+                    break;
+                case "PickUp":
+                    st1 = Integer.parseInt(row[1]);
+                    st2 = Integer.parseInt(row[2]);
+                    instruction = new Instructions.PickUp(st1, st2);
+                    break;
+                case "Drop":
+                    st = Integer.parseInt(row[1]);
+                    instruction = new Instructions.Drop(st);
+                    break;
+                case "Turn":
+                    Turn turn = null;
+                    st = Integer.parseInt(row[2]);
+                    if (row[1].equals("Right")) {
+                        lr = turn.lr.RIGHT;
+                    } else {
+                        lr = turn.lr.LEFT;
+                    }
+                    instruction = new Instructions.Turn(lr, st);
+                    break;
+                case "Move":
+                    st1 = Integer.parseInt(row[1]);
+                    st2 = Integer.parseInt(row[2]);
+                    instruction = new Instructions.Move(st1, st2);
+                    break;
+                case "Flip":
+                    p = brain.
+                    st1 = Integer.parseInt(row[1]);
+                    st2 = Integer.parseInt(row[2]);
+                    break;
+            }
+            if (Character.isDigit(row[j])) {
+                stringArray[i][y] = ((Integer) Character.getNumericValue(row[j])).toString();
+                i++;
+            }
+        }
+    }
+}
