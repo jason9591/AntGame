@@ -1,89 +1,270 @@
 package antgame;
 
-class Instruction {
-    int st;
-    public Instruction(int st){
-        this.st = st;
+/**
+ *
+ * @author team3
+ */
+public class Instruction {
+
+    /**
+     *
+     */
+    public Instruction() {
     }
 }
 
 class Sense extends Instruction {
-    enum Dir{
-        Here,
-        Ahead,
-        LeftAhead,
-        RightAhead;
-    }
 
+    enum Dir {
+
+        HERE,
+        AHEAD,
+        LEFTAHEAD,
+        RIGHTAHEAD;
+    }
     Dir sensedir;
     int st2;
     Cond cond;
-    
-    public Sense(Dir sensedir, int st, int st2, Cond cond){
-        super(st);
-        sensedir = this.sensedir;
+    int st;
+
+    public Sense(Sense.Dir sensedir, int st, int st2, Cond cond) {
+        this.st = st;
+        this.sensedir = sensedir;
         this.st2 = st2;
         this.cond = cond;
-        
+
+    }
+
+    public Sense.Dir getSensedir() {
+        return sensedir;
+    }
+
+    public int getSt2() {
+        return st2;
+    }
+
+    public Cond getCond() {
+        return cond;
+    }
+
+    public int getSt() {
+        return st;
+    }
+
+    @Override
+    public String toString() {
+        return "Sense";
     }
 }
 
+/**
+ *
+ */
 class Mark extends Instruction {
+
     int i;
-    public Mark(int i, int st){
-        super(st);
+    int st;
+
+    public Mark(int i, int st) {
+        this.st = st;
         this.i = i;
+    }
+
+    public int getI() {
+        return i;
+    }
+
+    public int getSt() {
+        return st;
+    }
+
+    @Override
+    public String toString() {
+        return "Mark";
     }
 }
 
+/**
+ *
+ */
 class Unmark extends Instruction {
+
     int i;
-    public Unmark(int i, int st){
-        super(st);
+    int st;
+
+    public Unmark(int i, int st) {
+        this.st = st;
         this.i = i;
+    }
+
+    public int getI() {
+        return i;
+    }
+
+    public int getSt() {
+        return st;
+    }
+
+    @Override
+    public String toString() {
+        return "Unmark";
     }
 }
 
+/**
+ *
+ */
 class PickUp extends Instruction {
+
+    int st1;
     int st2;
-    public PickUp(int st1, int st2){
-        super(st1);
+
+    public PickUp(int st1, int st2) {
+        this.st1 = st1;
         this.st2 = st2;
     }
-}
 
-class Drop extends Instruction {
-    public Drop(int st){
-        super(st);
+    public int getSt1() {
+        return st1;
+    }
+
+    public int getSt2() {
+        return st2;
+    }
+
+    @Override
+    public String toString() {
+        return "Pickup";
     }
 }
 
+/**
+ *
+ */
+class Drop extends Instruction {
+
+    int st;
+
+    public Drop(int st) {
+        this.st = st;
+    }
+
+    public int getSt() {
+        return st;
+    }
+
+    @Override
+    public String toString() {
+        return "Drop";
+    }
+}
+
+
+/**
+ *
+ */
 class Turn extends Instruction {
-    enum left_right{
+
+    enum Left_Right {
+
         LEFT,
         RIGHT;
     }
-    left_right lr;
-    public Turn(left_right lr, int st){
-        super(st);
-        this.lr = lr;
+    int st;
+    Left_Right left_or_right;
+
+    /**
+     *
+     * @param @param
+     */
+    public Turn(Left_Right lr, int st) {
+        this.st = st;
+        if (lr == Left_Right.RIGHT) {
+            left_or_right = Left_Right.RIGHT;
+        } else {
+            left_or_right = Left_Right.LEFT;
+        }
+    }
+
+    /**
+     *
+     * @return
+     */
+    public Left_Right getLr() {
+        return left_or_right;
+    }
+
+    public int getSt() {
+        return st;
+    }
+
+    public void setLeft_or_right(Left_Right left_or_right) {
+        this.left_or_right = left_or_right;
+    }
+    
+
+    @Override
+    public String toString() {
+        return "Turn";
     }
 }
 
+/**
+ *
+ */
 class Move extends Instruction {
+
+    int st;
     int st2;
-    public Move(int st, int st2){
-        super(st);
+
+    public Move(int st, int st2) {
+        this.st = st;
         this.st2 = st2;
     }
+
+    public int getSt() {
+        return st;
+    }
+
+    public int getSt2() {
+        return st2;
+    }
+
+    @Override
+    public String toString() {
+        return "Move";
+    }
 }
 
+/**
+ *
+ */
 class Flip extends Instruction {
+
     int p;
+    int st;
     int st2;
-    public Flip(int p, int st, int st2){
-        super(st);
+
+    public Flip(int p, int st, int st2) {
+        this.st = st;
         this.st2 = st2;
         this.p = p;
+    }
+
+    public int getP() {
+        return p;
+    }
+
+    public int getSt() {
+        return st;
+    }
+
+    public int getSt2() {
+        return st2;
+    }
+
+    @Override
+    public String toString() {
+        return "Flip";
     }
 }
