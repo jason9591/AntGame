@@ -1,0 +1,68 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package antgame;
+
+import antgame.AntHill.Color;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import static org.junit.Assert.*;
+
+/**
+ *
+ * @author hn66
+ */
+public class AntHillTest {
+    
+    public AntHillTest() {
+    }
+    
+    @BeforeClass
+    public static void setUpClass() {
+    }
+    
+    @AfterClass
+    public static void tearDownClass() {
+    }
+    
+    @Before
+    public void setUp() {
+    }
+    
+    @After
+    public void tearDown() {
+    }
+
+    /**
+     * Test of getColor method, of class AntHill.
+     */
+    @Test
+    public void testGetColor() {
+        System.out.println("getColor");
+        Color c = Color.valueOf("RED");
+        AntHill instance = new AntHill(new Cell(0,1), c);
+        AntHill.Color expResult = c;
+        AntHill.Color result = instance.getColor();
+        assertEquals(expResult, result);
+        // TODO review the generated test code and remove the default call to fail.
+    }
+
+    /**
+     * Test of getCell method, of class AntHill.
+     */
+    @Test
+    public void testGetCell() {
+        System.out.println("getCell");
+        Color c = Color.valueOf("RED");
+        Cell ce = new Cell(0, 1);
+        AntHill instance = new AntHill(ce, c);
+        Cell expResult = ce;
+        Cell result = instance.getCell();
+        assertEquals(expResult, result);
+        // TODO review the generated test code and remove the default call to fail.
+    }
+}
