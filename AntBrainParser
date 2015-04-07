@@ -1,48 +1,85 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package antgame;
 
 import java.io.*;
+import java.util.ArrayList;
+import antgame.errors.InvalidSyntaxException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  *
- * @author bps23
+ * @author team3
  */
 public class AntBrainParser {
 
-    Instructions instruction;
-    Instructions.Dir dir;
+    Instruction instruction;
     Cond cond;
+    Sense.Dir dir;
+    Turn.Left_Right lr;
     AntBrain brain;
+    ArrayList<Instruction> fsm;
+    String pattern = "(Turn (Right|Left) \\d{1,4})|(Flip [1-9][0-9]* \\d{1,4} \\d{1,4})|(Sense (Here|Ahead|LeftAhead|RightAhead) \\d{1,4} \\d{1,4} (Friend(WithFood)?|Foe(WithFood|Marker|Home)?|Food|Rock|Marker [0-5]|Home))|(Mark [0-5] \\d{1,4})|(Unmark [0-5] \\d{1,4})|(PickUp \\d{1,4} \\d{1,4})|(Drop \\d{1,4})|(Move \\d{1,4} \\d{1,4})";
 
-    private void readFile(String pathName) throws FileNotFoundException, IOException {
-        int n = 0; //Counter to read the numbers
+    public AntBrainParser() throws FileNotFoundException, IOException, InvalidSyntaxException {
+        fsm = new ArrayList<>();
+    }
+
+    public static void main(String[] args) throws IOException, FileNotFoundException, InvalidSyntaxException {
+        AntBrainParser abp = new AntBrainParser();
+        abp.parseBrain("src/antgame/brains/brain1.txt");
+        abp.printInstructions();
+    }
+
+    /**
+     *
+     * @param pathName
+     */
+    public ArrayList<Instruction> parseBrain(String pathName) throws FileNotFoundException, IOException, InvalidSyntaxException {
         BufferedReader br = new BufferedReader(new FileReader(pathName));
         String line;
         while ((line = br.readLine()) != null) {
-
-            n++;
+            parseLine(line);
+            fsm.add(instruction);
         }
-
+        return fsm;
     }
 
-    private void parseLine(String line, int y) {
+    /**
+     *
+     * @param line
+     * @throws java.io.IOException
+     * @throws antgame.errors.InvalidSyntaxException
+     */
+    public void parseLine(String line) throws IOException, InvalidSyntaxException {
         int i;
         int st;
         int st1;
         int st2;
         int p;
-        Instructions.left_right lr;
 
+//        if (line.matches(pattern)) {
+        syntaxCheck(line);
         String[] row = line.split(" ");
-        for (int j = 0; j < row.length; j++) {
+        for(int j = 0; j < row.length; j++) {
             switch (row[0]) {
                 case "Sense":
-                    Instructions.Dir sensedir = new Instructions.Dir(row[1]);
+                    switch (row[1]) {
+                        case "Here":
+                            dir = Sense.Dir.HERE;
+                            break;
+                        case "Ahead":
+                            dir = Sense.Dir.AHEAD;
+                            break;
+                        case "LeftAhead":
+                            dir = Sense.Dir.LEFTAHEAD;
+                            break;
+                        case "RightAhead":
+                            dir = Sense.Dir.RIGHTAHEAD;
+                            break;
+                    }
                     st1 = Integer.parseInt(row[2]);
                     st2 = Integer.parseInt(row[3]);
+
                     switch (row[4]) {
                         case "Friend":
                             cond = new Friend();
@@ -69,52 +106,63 @@ public class AntBrainParser {
                             cond = new FoeHome();
                             break;
                     }
-                    instruction = new Instructions.Sense(sensedir, st1, st2, cond);
+                    instruction = new Sense(dir, st1, st2, cond);
                     break;
                 case "Mark":
                     i = Integer.parseInt(row[1]);
                     st = Integer.parseInt(row[2]);
-                    instruction = new Instructions.Mark(i, st);
+                    instruction = new Mark(i, st);
                     break;
                 case "Unmark":
                     i = Integer.parseInt(row[1]);
                     st = Integer.parseInt(row[2]);
-                    instruction = new Instructions.Unmark(i, st);
+                    instruction = new Unmark(i, st);
                     break;
                 case "PickUp":
                     st1 = Integer.parseInt(row[1]);
                     st2 = Integer.parseInt(row[2]);
-                    instruction = new Instructions.PickUp(st1, st2);
+                    instruction = new PickUp(st1, st2);
                     break;
                 case "Drop":
                     st = Integer.parseInt(row[1]);
-                    instruction = new Instructions.Drop(st);
+                    instruction = new Drop(st);
                     break;
                 case "Turn":
-                    Turn turn = null;
                     st = Integer.parseInt(row[2]);
                     if (row[1].equals("Right")) {
-                        lr = turn.lr.RIGHT;
+                        lr = Turn.Left_Right.RIGHT;
                     } else {
-                        lr = turn.lr.LEFT;
+                        lr = Turn.Left_Right.LEFT;
                     }
-                    instruction = new Instructions.Turn(lr, st);
+                    instruction = new Turn(lr, st);
                     break;
                 case "Move":
                     st1 = Integer.parseInt(row[1]);
                     st2 = Integer.parseInt(row[2]);
-                    instruction = new Instructions.Move(st1, st2);
+                    instruction = new Move(st1, st2);
                     break;
                 case "Flip":
-                    p = brain.
-                    st1 = Integer.parseInt(row[1]);
-                    st2 = Integer.parseInt(row[2]);
+                    p = Integer.parseInt(row[1]);
+                    st1 = Integer.parseInt(row[2]);
+                    st2 = Integer.parseInt(row[3]);
+                    instruction = new Flip(p, st1, st2);
                     break;
             }
-            if (Character.isDigit(row[j])) {
-                stringArray[i][y] = ((Integer) Character.getNumericValue(row[j])).toString();
-                i++;
-            }
+        }
+    }
+
+    public void syntaxCheck(String line) throws InvalidSyntaxException {
+        Pattern r = Pattern.compile(pattern);
+        Matcher m = r.matcher(line);
+        boolean matches = m.matches();
+        if(!matches){
+            throw new InvalidSyntaxException("Invalid Syntax");
+        }
+    }
+
+    public void printInstructions() {
+        for (Instruction i : fsm) {
+            System.out.println(i.toString());
         }
     }
 }
