@@ -1,18 +1,11 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package antgame;
-import antgame.AntHill.Color;
-
-
 
 /**
  *
- * @author sw386
+ * @author team3
  */
 public class Ant {
-   
+
     Color color;
     int id;
     int state;
@@ -20,55 +13,89 @@ public class Ant {
     int direction;
     boolean has_food;
     Cell cell;
-    World world;
+    World w;
 
-    public Ant(World w, Cell c){
-        world = w;
-        cell = c;
-    }
+    /**
+     *
+     * @param w
+     * @param cell
+     * @param c
+     */
+    public Ant(World w, Cell cell, Color c) {
+        this.w = w;
+        this.cell = cell;
+        color = c;
 
-    public Cell getCell() {
-        return cell;
-    }
-    
-    public int getId() {
-        return id;
-    }
-    
-    public Color other_color(Color c) {
-        switch (c) {
-            case RED:
-                return Color.BLACK;
-            case BLACK:
-                return Color.RED;
-        }
-        return null; //consider throwing an exception
     }
 
-    private int state(Ant a) {
+    /**
+     *
+     * @param a
+     * @return
+     */
+    public int state(Ant a) {
         return state;
     }
 
-    private int resting(Ant a) {
+    /**
+     *
+     * @param a
+     * @return
+     */
+    public Color color(Ant a) {
+        return color;
+    }
+
+    /**
+     *
+     * @param a
+     * @return
+     */
+    public int resting(Ant a) {
         return resting;
     }
 
-    private int direction(Ant a) {
+    /**
+     *
+     * @param a
+     * @return
+     */
+    public int direction(Ant a) {
         return direction;
     }
 
-    private boolean has_food(Ant a) {
+    /**
+     *
+     * @param a
+     * @return
+     */
+    public boolean has_food(Ant a) {
         return has_food;
     }
 
+    /**
+     *
+     * @param a
+     * @param s
+     */
     public void set_state(Ant a, int s) {
         state = s;
     }
 
+    /**
+     *
+     * @param a
+     * @param r
+     */
     public void set_resting(Ant a, int r) {
         resting = r;
     }
 
+    /**
+     *
+     * @param a
+     * @param d
+     */
     public void set_direction(Ant a, int d) {
         if (d > 0 && d < 7) {
             direction = d;
@@ -77,42 +104,103 @@ public class Ant {
         }
     }
 
+    /**
+     *
+     * @param a
+     * @param b
+     */
     public void set_has_food(Ant a, boolean b) {
         has_food = b;
     }
 
+    /**
+     *
+     * @param p
+     * @param c
+     * @return
+     */
     public int adjacent_ants(Cell p, Color c) {
         int n = 0;
         for (int d = 0; d < 6; d++) {
-            Cell cel = world.adjacent_cell(p, d);
-            if (world.some_ant_is_at(cel) && (world.ant_at(cel)).color == c) {
+            Cell cel = w.adjacent_cell(p, d);
+            if (w.some_ant_is_at(cel) && (w.ant_at(cel)).color == c) {
                 n++;
             }
         }
         return n;
     }
 
+    /**
+     *
+     * @param p
+     */
     public void check_for_surrounded_ant_at(Cell p) {
         int i;
-        if (world.some_ant_is_at(p)) {
-            Ant a = world.ant_at(p);
-            if (adjacent_ants(p, other_color(a.color)) >= 5) {
-                world.kill_ant_at(p);
+        if (w.some_ant_is_at(p)) {
+            Ant a = w.ant_at(p);
+            if (adjacent_ants(p, color.other_color(color)) >= 5) {
+                w.kill_ant_at(p);
                 if (has_food(a)) {
                     i = 1;
                 } else {
                     i = 0;
                 }
-                world.set_food_at(p, world.food_at(p) + 3 + i);
+                w.set_food_at(p, w.food_at(p) + 3 + i);
             }
 
         }
     }
 
+    /**
+     *
+     * @param p
+     */
     public void check_for_surrounded_ants(Cell p) {
         check_for_surrounded_ant_at(p);
         for (int d = 0; d < 6; d++) {
-            check_for_surrounded_ant_at(world.adjacent_cell(p, d));
+            check_for_surrounded_ant_at(w.adjacent_cell(p, d));
         }
     }
+
+    /**
+     *
+     * @return
+     */
+    public Cell getCell() {
+        return cell;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public int getId() {
+        return id;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public int getDirection() {
+        return direction;
+    }
+    
+
+    /**
+     *
+     * @param color
+     */
+    public void setColor(Color color) {
+        this.color = color;
+    }
+
+    /**
+     *
+     * @param color
+     * @param state
+     * @return The instruction of the right brain at the given state
+     */
+
+
 }
