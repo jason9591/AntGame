@@ -1,117 +1,47 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package antgame;
 
-import antgame.AntHill.Color;
-import java.math.BigInteger;
+import java.util.ArrayList;
 
 /**
  *
- * @author sw386
+ * @author team3
  */
 public class AntBrain {
 
     Cell cell;
     World world;
     Ant ant;
-    Marker marker;
     AntHill anthill;
+    Marker marker;
+    ArrayList<Instruction> instructions;
 
-    public enum condition {
-
-        Friend, Foe, FriendWithFood, FoeWithFood, Food, Rock, Marker, FoeMarker, Home, FoeHome
-    }
     /**
-     * @param args the command line arguments
+     *
      */
-    public static void main(String[] args) {
-        AntBrain ab = new AntBrain();
-        ab.randomint(16390);
-        System.out.println();
+    public enum Condition {
+
+        FRIEND,
+        FOE,
+        FRIENDWITHFOOD,
+        FOEWITHFOOD,
+        FOOD,
+        ROCK,
+        MARKER,
+        FOEMARKER,
+        HOME,
+        FOEHOME
     }
 
-public boolean cell_matches(Cell pos, condition cond, Color c) {
-        if (world.rocky(pos)) {
-            if (cond == condition.Rock) {
-
-                return true;
-            } else {
-                return false;
-            }
-        } else {
-            switch (cond) {
-                case Friend:
-                    if (world.some_ant_is_at(pos) && (world.ant_at(pos).color) == c) {
-                        return true;
-                    } else {
-                        return false;
-                    }
-                case Foe:
-                    if (world.some_ant_is_at(pos) && (world.ant_at(pos).color) != c) {
-                        return true;
-                    } else {
-                        return false;
-                    }
-                case FriendWithFood:
-                    if (world.some_ant_is_at(pos) && (world.ant_at(pos).color) == c && (world.ant_at(pos).has_food)) {
-                        return true;
-                    } else {
-                        return false;
-                    }
-                case FoeWithFood:
-                    if (world.some_ant_is_at(pos) && (world.ant_at(pos).color) != c && (world.ant_at(pos).has_food)) {
-                        return true;
-                    } else {
-                        return false;
-                    }
-                case Food:
-                    if (world.food_at(pos) > 0) {
-                        return true;
-                    } else {
-                        return false;
-                    }
-                case Rock:
-                    return false;
-                case Marker:
-                    marker.set_marker_at(pos, c, marker);
-                    return true;
-                case FoeMarker:
-                    marker.check_any_marker_at(pos, ant.other_color(c));
-                    return true;
-                case Home:
-                    anthill = new AntHill(pos, c);
-                    cell.set_anthill(anthill);
-                    return true;
-                case FoeHome:
-                    anthill = new AntHill(pos, ant.other_color(c));
-                    cell.set_anthill(anthill);
-                    return true;
-            }
-        }
-
-        return true;
+    /**
+     *
+     * @param instructions
+     */
+    public AntBrain(ArrayList<Instruction> instructions) {
+        this.instructions = instructions;
     }
 
-    public Instructions get_instruction(Color color, int state) {
-        return null;
+    public ArrayList<Instruction> getInstructions() {
+        return instructions;
     }
-    public int randomint(int n) {
-        BigInteger[] seed = new BigInteger[n];
-        BigInteger[] x = new BigInteger[n];
-        seed[0] = BigInteger.valueOf(12345);
 
-        for (int i = 0; i < n - 1; i++) {
-            seed[i + 1] = seed[i].multiply(BigInteger.valueOf(22695477)).add(BigInteger.valueOf(1));
-        }
-        for (int i = 0; i < n - 4; i++) {
-            x[i] = (seed[i + 4].divide(BigInteger.valueOf(65536)).mod(BigInteger.valueOf(16384)));
-        }
-        for (int i = 0; i < 100; i++) {
-            System.out.print(x[i] + " ");
-        }
-        return x[n-5].intValue();
-
-    }
 }
