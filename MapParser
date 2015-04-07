@@ -1,20 +1,39 @@
 package antgame;
 
+import java.awt.GridLayout;
 import java.io.*;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
+/**
+ *
+ * @author team3
+ */
 public class MapParser {
 
     int x; //The x length of the map
     int y; //The y length of the map
     String[][] stringArray; //A two dimensional array to store the map
+    private final String pathName;
+    JPanel worldGrid;
+    Cell[][] cells;
+    World world;
 
-//    public static void main(String[] args) throws FileNotFoundException, IOException {
-//        MapParser mp = new MapParser();
-//        mp.readFile("src/world/world1");
-//        mp.printWorld();
-//    }
+    /**
+     *
+     * @param pathName
+     */
+    public MapParser(String pathName) {
+        this.pathName = pathName;
+    }
 
-    private void readFile(String pathName) throws FileNotFoundException, IOException {
+    /**
+     *
+     * @return @throws FileNotFoundException
+     * @throws IOException
+     */
+    public World loadWorld() throws FileNotFoundException, IOException {
+        worldGrid = new JPanel();
         int n = 0; //Counter to read the numbers
         BufferedReader br = new BufferedReader(new FileReader(pathName));
         String line;
@@ -24,51 +43,118 @@ public class MapParser {
             } else if (n == 1) {
                 y = Integer.parseInt(line);
                 stringArray = new String[x][y];
+                cells = new Cell[x][y];
+                worldGrid.setLayout(new GridLayout(x, y));
             } else if (n > 1) {
                 parseLine(line, n - 2);
             }
             n++;
         }
+        world = new World(cells);
+        return world;
     }
 
-    private void parseLine(String line, int y) {
+    /**
+     *
+     * @param line
+     * @param y
+     */
+    public void parseLine(String line, int y) {
         int i = 0;
         char[] row = line.toCharArray();
         for (int j = 0; j < row.length; j++) {
             switch (row[j]) {
                 case '#':
-                    stringArray[i][y] = "#";
+                    stringArray[i][y] = "#  ";
+                    cells[i][y] = new Cell(i, y);
+                    cells[i][y].setRocky();
+                    makeGraphic(stringArray[i][y]);
                     i++;
                     break;
                 case '.':
-                    stringArray[i][y] = ".";
+                    stringArray[i][y] = ".  ";
+                    cells[i][y] = new Cell(i, y);
+                    makeGraphic(stringArray[i][y]);
                     i++;
                     break;
                 case '+':
-                    stringArray[i][y] = "+";
+                    stringArray[i][y] = "+  ";
+                    cells[i][y] = new Cell(i, y);
+                    cells[i][y].setAnt(new Ant(world, cells[i][y], Color.RED));
+                    makeGraphic(stringArray[i][y]);
                     i++;
                     break;
                 case '-':
-                    stringArray[i][y] = "-";
+                    stringArray[i][y] = "-  ";
+                    cells[i][y] = new Cell(i, y);
+                    cells[i][y].setAnt(new Ant(world, cells[i][y], Color.BLACK));
+                    makeGraphic(stringArray[i][y]);
                     i++;
                     break;
             }
             if (Character.isDigit(row[j])) {
                 stringArray[i][y] = ((Integer) Character.getNumericValue(row[j])).toString();
+                cells[i][y] = new Cell(i, y);
+                cells[i][y].set_food(Character.getNumericValue(row[j]));
+                makeGraphic(stringArray[i][y]);
                 i++;
             }
         }
     }
 
-    public void printWorld() {
-        for (int i = 0; i < stringArray.length; i++) {
-            for (int j = 0; j < stringArray[i].length; j++) {
-                System.out.print(stringArray[i][j]);
-                if (j < stringArray[i].length - 1) {
-                    System.out.print(" ");
-                }
-            }
-            System.out.println();
-        }
+    /**
+     *
+     * @param input
+     */
+    public void makeGraphic(String input) {
+        worldGrid.add(new JLabel(input));
     }
-} 
+
+    /**
+     *
+     * @return
+     */
+    public int getX() {
+        return x;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public int getY() {
+        return y;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public String[][] getStringArray() {
+        return stringArray;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public JPanel getWorldGrid() {
+        return worldGrid;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public Cell[][] getCells() {
+        return cells;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public World getWorld() {
+        return world;
+    }
+}
