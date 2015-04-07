@@ -38,18 +38,6 @@ public class WorldTest {
     }
 
     /**
-     * Test of main method, of class World.
-     */
-    @Test
-    public void testMain() {
-//        System.out.println("main");
-//        String[] args = null;
-//        World.main(args);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
      * Test of step method, of class World.
      */
     @Test
@@ -66,11 +54,11 @@ public class WorldTest {
      * Test of cell_matches method, of class World.
      */
     @Test
-    public void testCell_matches() {
-        System.out.println("cell_matches");
-        Cell pos = new Cell(2,1);
-        Cond cond = new Foe();
-        Color c = new Red();
+    public void testFoodCell_matches() {
+        System.out.println("Food_cell_matches");
+        Cell pos = new Cell(2, 1);
+        Cond cond = new Food();
+        Color c = Color.RED;
         Cell[][] customWorld = new Cell[150][150];
         for (int i = 0; i < 150; i++) {
             for (int j = 0; j < 150; j++) {
@@ -78,9 +66,231 @@ public class WorldTest {
             }
         }
         World instance = new World(customWorld);
-        boolean expResult = false;
+        pos.set_food(5);
+        customWorld[2][1] = pos;
         boolean result = instance.cell_matches(pos, cond, c);
-        assertEquals(expResult, result);
+        assertTrue(result);
+        // TODO review the generated test code and remove the default call to fail.
+    }
+
+    @Test
+    public void testRockCell_matches() {
+        System.out.println("Rock_cell_matches");
+        Cell pos = new Cell(2, 1);
+        Cond cond = new Rock();
+        Color c = Color.RED;
+        Cell[][] customWorld = new Cell[150][150];
+        for (int i = 0; i < 150; i++) {
+            for (int j = 0; j < 150; j++) {
+                customWorld[i][j] = new Cell(i, j);
+            }
+        }
+        World instance = new World(customWorld);
+        pos.setRocky();
+        customWorld[2][1] = pos;
+        boolean result = instance.cell_matches(pos, cond, c);
+        assertTrue(result);
+        // TODO review the generated test code and remove the default call to fail.
+    }
+
+    /**
+     * Test of cell_matches method, of class World.
+     */
+    @Test
+    public void testFriendsCell_matches() {
+        System.out.println("Friends_cell_matches");
+        Cell pos = new Cell(2, 1);
+        Cond cond = new Friend();
+        Color c = Color.RED;
+        Cell[][] customWorld = new Cell[150][150];
+        for (int i = 0; i < 150; i++) {
+            for (int j = 0; j < 150; j++) {
+                customWorld[i][j] = new Cell(i, j);
+            }
+        }
+        World instance = new World(customWorld);
+        Ant a = new Ant(instance, pos, c);
+        pos.setAnt(a);
+        customWorld[2][1] = pos;
+        boolean result = instance.cell_matches(pos, cond, c);
+        assertTrue(result);
+        // TODO review the generated test code and remove the default call to fail.
+    }
+
+    /**
+     * Test of cell_matches method, of class World.
+     */
+    @Test
+    public void testFoeCell_matches() {
+        System.out.println("Foe_cell_matches");
+        Cell pos = new Cell(2, 1);
+        Cond cond = new Foe();
+        Color c = Color.RED;
+        Color c1 = Color.BLACK;
+        Cell[][] customWorld = new Cell[150][150];
+        for (int i = 0; i < 150; i++) {
+            for (int j = 0; j < 150; j++) {
+                customWorld[i][j] = new Cell(i, j);
+            }
+        }
+        World instance = new World(customWorld);
+        Ant a = new Ant(instance, pos, c);
+        pos.setAnt(a);
+        customWorld[2][1] = pos;
+        boolean result = instance.cell_matches(pos, cond, c1);
+        assertTrue(result);
+        // TODO review the generated test code and remove the default call to fail.
+    }
+    
+    
+    
+        /**
+     * Test of cell_matches method, of class World.
+     */
+    @Test
+    public void testFoeWithFoodCell_matches() {
+        System.out.println("FoeWithFood_cell_matches");
+        Cell pos = new Cell(2, 1);
+        Cond cond = new FoeWithFood();
+        Color c = Color.RED;
+        Color c1 = Color.BLACK;
+        Cell[][] customWorld = new Cell[150][150];
+        for (int i = 0; i < 150; i++) {
+            for (int j = 0; j < 150; j++) {
+                customWorld[i][j] = new Cell(i, j);
+            }
+        }
+        World instance = new World(customWorld);
+        Ant a = new Ant(instance, pos, c);
+        a.set_has_food(a, true);
+        pos.setAnt(a);
+        customWorld[2][1] = pos;
+        boolean result = instance.cell_matches(pos, cond, c1);
+        assertTrue(result);
+        // TODO review the generated test code and remove the default call to fail.
+    }
+
+
+    /**
+     * Test of cell_matches method, of class World.
+     */
+    @Test
+    public void testFriendWithFoodCell_matches() {
+        System.out.println("Friends_with_food_cell_matches");
+        Cell pos = new Cell(2, 1);
+        Cond cond = new Friend();
+        Color c = Color.RED;
+        Cell[][] customWorld = new Cell[150][150];
+        for (int i = 0; i < 150; i++) {
+            for (int j = 0; j < 150; j++) {
+                customWorld[i][j] = new Cell(i, j);
+            }
+        }
+        World instance = new World(customWorld);
+        Ant a = new Ant(instance, pos, c);
+        a.set_has_food(a, true);
+        pos.setAnt(a);
+        customWorld[2][1] = pos;
+        boolean result = instance.cell_matches(pos, cond, c);
+        assertTrue(result);
+        // TODO review the generated test code and remove the default call to fail.
+    }
+
+    /**
+     * Test of cell_matches method, of class World.
+     */
+    @Test
+    public void testMarkCell_matches() {
+        System.out.println("Mark_cell_matches");
+        Cell pos = new Cell(2, 1);
+        int x = 0;
+        Cond cond = new Marker(x);
+        Color c = Color.RED;
+        Cell[][] customWorld = new Cell[150][150];
+        for (int i = 0; i < 150; i++) {
+            for (int j = 0; j < 150; j++) {
+                customWorld[i][j] = new Cell(i, j);
+            }
+        }
+        World instance = new World(customWorld);
+        pos.set_marker_at(c, x);
+        customWorld[2][1] = pos;
+        boolean result = instance.cell_matches(pos, cond, c);
+        assertTrue(result);
+        // TODO review the generated test code and remove the default call to fail.
+    }
+
+    /**
+     * Test of cell_matches method, of class World.
+     */
+    @Test
+    public void testFoeMarkCell_matches() {
+        System.out.println("Foe_Mark_cell_matches");
+        Cell pos = new Cell(2, 1);
+        int x = 0;
+        Cond cond = new FoeMarker();
+        Color c = Color.RED;
+        Color c1 = Color.BLACK;
+        Cell[][] customWorld = new Cell[150][150];
+        for (int i = 0; i < 150; i++) {
+            for (int j = 0; j < 150; j++) {
+                customWorld[i][j] = new Cell(i, j);
+            }
+        }
+        World instance = new World(customWorld);
+        pos.set_marker_at(c, x);
+        customWorld[2][1] = pos;
+        boolean result = instance.cell_matches(pos, cond, c1);
+        assertTrue(result);
+        // TODO review the generated test code and remove the default call to fail.
+    }
+
+
+    /**
+     * Test of cell_matches method, of class World.
+     */
+    @Test
+    public void testHomeCell_matches() {
+        System.out.println("Home_cell_matches");
+        Cell pos = new Cell(2, 1);
+        Cond cond = new Home();
+        Color c = Color.RED;
+        Cell[][] customWorld = new Cell[150][150];
+        for (int i = 0; i < 150; i++) {
+            for (int j = 0; j < 150; j++) {
+                customWorld[i][j] = new Cell(i, j);
+            }
+        }
+        World instance = new World(customWorld);
+        AntHill a = new AntHill(instance, pos, c);
+        pos.set_anthill(a);
+        customWorld[2][1] = pos;
+        boolean result = instance.cell_matches(pos, cond, c);
+        assertTrue(result);
+        // TODO review the generated test code and remove the default call to fail.
+    }
+        /**
+     * Test of cell_matches method, of class World.
+     */
+    @Test
+    public void testFoeHomeCell_matches() {
+        System.out.println("Foe_Home_cell_matches");
+        Cell pos = new Cell(2, 1);
+        Cond cond = new FoeHome();
+        Color c = Color.RED;
+        Color c1 = Color.BLACK;
+        Cell[][] customWorld = new Cell[150][150];
+        for (int i = 0; i < 150; i++) {
+            for (int j = 0; j < 150; j++) {
+                customWorld[i][j] = new Cell(i, j);
+            }
+        }
+        World instance = new World(customWorld);
+        AntHill a = new AntHill(instance, pos, c);
+        pos.set_anthill(a);
+        customWorld[2][1] = pos;
+        boolean result = instance.cell_matches(pos, cond, c1);
+        assertTrue(result);
         // TODO review the generated test code and remove the default call to fail.
     }
 
@@ -103,7 +313,8 @@ public class WorldTest {
         Cell result = instance.adjacent_cell(p, d);
         System.out.println(result.getX());
         System.out.println(result.getY());
-        assertEquals(expResult, result);
+        assertEquals(expResult.getX(), result.getX());
+        assertEquals(expResult.getY(), result.getY());
         // TODO review the generated test code and remove the default call to fail.
     }
 
@@ -115,7 +326,7 @@ public class WorldTest {
         System.out.println("Left turn");
         Turn.Left_Right lr = Turn.Left_Right.LEFT;
         int d = 2;
-         Cell[][] customWorld = new Cell[150][150];
+        Cell[][] customWorld = new Cell[150][150];
         for (int i = 0; i < 150; i++) {
             for (int j = 0; j < 150; j++) {
                 customWorld[i][j] = new Cell(i, j);
@@ -127,9 +338,8 @@ public class WorldTest {
         assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
     }
-    
-    
-        /**
+
+    /**
      * Test of turn method, of class World.
      */
     @Test
@@ -137,7 +347,7 @@ public class WorldTest {
         System.out.println("Right turn");
         Turn.Left_Right lr = Turn.Left_Right.RIGHT;
         int d = 2;
-         Cell[][] customWorld = new Cell[150][150];
+        Cell[][] customWorld = new Cell[150][150];
         for (int i = 0; i < 150; i++) {
             for (int j = 0; j < 150; j++) {
                 customWorld[i][j] = new Cell(i, j);
@@ -156,7 +366,7 @@ public class WorldTest {
     @Test
     public void testHeadSensed_cell() {
         System.out.println("sensed_cell");
-        Cell p = new Cell(2,2);
+        Cell p = new Cell(2, 2);
         int d = 0;
         Sense.Dir sd = Sense.Dir.HERE;
         Cell[][] customWorld = new Cell[150][150];
@@ -168,20 +378,17 @@ public class WorldTest {
         World instance = new World(customWorld);
         Cell expResult = p;
         Cell result = instance.sensed_cell(p, d, sd);
-        System.out.println(result.getX());
-        System.out.println(result.getY());
         assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
     }
-    
-    
-        /**
+
+    /**
      * Test of sensed_cell method, of class World.
      */
     @Test
     public void testAheadSensed_cell() {
         System.out.println("sensed_cell");
-        Cell p = new Cell(2,2);
+        Cell p = new Cell(2, 2);
         int d = 0;
         Sense.Dir sd = Sense.Dir.AHEAD;
         Cell[][] customWorld = new Cell[150][150];
@@ -191,22 +398,23 @@ public class WorldTest {
             }
         }
         World instance = new World(customWorld);
-        Cell expResult = new Cell(3,2);
+        Cell expResult = new Cell(3, 2);
         Cell result = instance.sensed_cell(p, d, sd);
-        System.out.println(result.getX());
-        System.out.println(result.getY());
-        assertEquals(expResult, result);
+//        System.out.println(result.getX());
+        //        System.out.println("----------------------------------------------");
+//        System.out.println(result.getY());        
+        assertEquals(expResult.getX(), result.getX());
+        assertEquals(expResult.getY(), result.getY());
         // TODO review the generated test code and remove the default call to fail.
     }
-    
-    
-        /**
+
+    /**
      * Test of sensed_cell method, of class World.
      */
     @Test
     public void testLeftaheadSensed_cell() {
         System.out.println("sensed_cell");
-        Cell p = new Cell(2,2);
+        Cell p = new Cell(2, 2);
         int d = 0;
         Sense.Dir sd = Sense.Dir.LEFTAHEAD;
         Cell[][] customWorld = new Cell[150][150];
@@ -216,22 +424,22 @@ public class WorldTest {
             }
         }
         World instance = new World(customWorld);
-        Cell expResult = new Cell(2,1);
+        Cell expResult = new Cell(2, 1);
         Cell result = instance.sensed_cell(p, d, sd);
         System.out.println(result.getX());
         System.out.println(result.getY());
-        assertEquals(expResult, result);
+        assertEquals(expResult.getX(), result.getX());
+        assertEquals(expResult.getY(), result.getY());
         // TODO review the generated test code and remove the default call to fail.
     }
-    
-    
-        /**
+
+    /**
      * Test of sensed_cell method, of class World.
      */
     @Test
     public void testRightaheadSensed_cell() {
         System.out.println("sensed_cell");
-        Cell p = new Cell(2,2);
+        Cell p = new Cell(2, 2);
         int d = 0;
         Sense.Dir sd = Sense.Dir.RIGHTAHEAD;
         Cell[][] customWorld = new Cell[150][150];
@@ -241,27 +449,13 @@ public class WorldTest {
             }
         }
         World instance = new World(customWorld);
-        Cell expResult = new Cell(2,3);
+        Cell expResult = new Cell(2, 3);
         Cell result = instance.sensed_cell(p, d, sd);
         System.out.println(result.getX());
         System.out.println(result.getY());
-        assertEquals(expResult, result);
+        assertEquals(expResult.getX(), result.getX());
+        assertEquals(expResult.getY(), result.getY());
         // TODO review the generated test code and remove the default call to fail.
-    }
-
-    /**
-     * Test of randomint method, of class World.
-     */
-    @Test
-    public void testRandomint() {
-        System.out.println("randomint");
-        int n = 0;
-        World instance = null;
-        int expResult = 0;
-        int result = instance.randomint(n);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
     }
 
     /**
@@ -270,13 +464,19 @@ public class WorldTest {
     @Test
     public void testRocky() {
         System.out.println("rocky");
-        Cell p = null;
-        World instance = null;
-        boolean expResult = false;
+        Cell p = new Cell(2, 3);
+        Cell[][] customWorld = new Cell[150][150];
+        for (int i = 0; i < 150; i++) {
+            for (int j = 0; j < 150; j++) {
+                customWorld[i][j] = new Cell(i, j);
+            }
+        }
+        World instance = new World(customWorld);
+        p.setRocky();
+        boolean expResult = true;
         boolean result = instance.rocky(p);
         assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
     }
 
     /**
@@ -285,13 +485,21 @@ public class WorldTest {
     @Test
     public void testSome_ant_is_at() {
         System.out.println("some_ant_is_at");
-        Cell p = null;
-        World instance = null;
-        boolean expResult = false;
+        Cell p = new Cell(2, 2);
+        Color c = Color.RED;
+        Cell[][] customWorld = new Cell[150][150];
+        for (int i = 0; i < 150; i++) {
+            for (int j = 0; j < 150; j++) {
+                customWorld[i][j] = new Cell(i, j);
+            }
+        }
+        World instance = new World(customWorld);
+        Ant a = new Ant(instance, p, c);
+        p.setAnt(a);
+        boolean expResult = true;
         boolean result = instance.some_ant_is_at(p);
         assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
     }
 
     /**
@@ -300,27 +508,21 @@ public class WorldTest {
     @Test
     public void testAnt_at() {
         System.out.println("ant_at");
-        Cell p = null;
-        World instance = null;
-        Ant expResult = null;
+        Cell p = new Cell(2, 2);
+        Color c = Color.RED;
+        Cell[][] customWorld = new Cell[150][150];
+        for (int i = 0; i < 150; i++) {
+            for (int j = 0; j < 150; j++) {
+                customWorld[i][j] = new Cell(i, j);
+            }
+        }
+        World instance = new World(customWorld);
+        Ant a = new Ant(instance, p, c);
+        instance.set_ant_at(p, a);
+        Ant expResult = a;
         Ant result = instance.ant_at(p);
         assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of set_ant_at method, of class World.
-     */
-    @Test
-    public void testSet_ant_at() {
-        System.out.println("set_ant_at");
-        Cell p = null;
-        Ant a = null;
-        World instance = null;
-        instance.set_ant_at(p, a);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
     }
 
     /**
@@ -329,11 +531,21 @@ public class WorldTest {
     @Test
     public void testClear_ant_at() {
         System.out.println("clear_ant_at");
-        Cell p = null;
-        World instance = null;
+        Cell p = new Cell(2, 2);
+        Color c = Color.RED;
+        Cell[][] customWorld = new Cell[150][150];
+        for (int i = 0; i < 150; i++) {
+            for (int j = 0; j < 150; j++) {
+                customWorld[i][j] = new Cell(i, j);
+            }
+        }
+        World instance = new World(customWorld);
+        Ant a = new Ant(instance, p, c);
+        instance.set_ant_at(p, a);
         instance.clear_ant_at(p);
+        Ant expResult = null;
+        Ant result = instance.ant_at(p);
         // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
     }
 
     /**
@@ -342,13 +554,23 @@ public class WorldTest {
     @Test
     public void testAnt_is_alive() {
         System.out.println("ant_is_alive");
+        Cell p = new Cell(2, 2);
+        Color c = Color.RED;
         int id = 0;
-        World instance = null;
-        boolean expResult = false;
+        Cell[][] customWorld = new Cell[150][150];
+        for (int i = 0; i < 150; i++) {
+            for (int j = 0; j < 150; j++) {
+                customWorld[i][j] = new Cell(i, j);
+            }
+        }
+        World instance = new World(customWorld);
+        Ant a = new Ant(instance, p, c);
+        instance.addAnt(a);
+        a.setId(id);
+        boolean expResult = true;
         boolean result = instance.ant_is_alive(id);
         assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
     }
 
     /**
@@ -358,25 +580,22 @@ public class WorldTest {
     public void testFind_ant() {
         System.out.println("find_ant");
         int id = 0;
-        World instance = null;
-        Cell expResult = null;
+        Cell p = new Cell(2, 2);
+        Color c = Color.RED;
+        Cell[][] customWorld = new Cell[150][150];
+        for (int i = 0; i < 150; i++) {
+            for (int j = 0; j < 150; j++) {
+                customWorld[i][j] = new Cell(i, j);
+            }
+        }
+        World instance = new World(customWorld);
+        Ant a = new Ant(instance, p, c);
+        instance.addAnt(a);
+        a.setId(id);
+        Cell expResult = p;
         Cell result = instance.find_ant(id);
         assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of kill_ant_at method, of class World.
-     */
-    @Test
-    public void testKill_ant_at() {
-        System.out.println("kill_ant_at");
-        Cell p = null;
-        World instance = null;
-        instance.kill_ant_at(p);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
     }
 
     /**
@@ -385,27 +604,19 @@ public class WorldTest {
     @Test
     public void testFood_at() {
         System.out.println("food_at");
-        Cell p = null;
-        World instance = null;
-        int expResult = 0;
+        Cell p = new Cell(3, 3);
+        Cell[][] customWorld = new Cell[150][150];
+        for (int i = 0; i < 150; i++) {
+            for (int j = 0; j < 150; j++) {
+                customWorld[i][j] = new Cell(i, j);
+            }
+        }
+        World instance = new World(customWorld);
+        instance.set_food_at(p, 5);
+        int expResult = 5;
         int result = instance.food_at(p);
         assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of set_food_at method, of class World.
-     */
-    @Test
-    public void testSet_food_at() {
-        System.out.println("set_food_at");
-        Cell p = null;
-        int f = 0;
-        World instance = null;
-        instance.set_food_at(p, f);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
     }
 
     /**
@@ -414,14 +625,20 @@ public class WorldTest {
     @Test
     public void testAnthill_at() {
         System.out.println("anthill_at");
-        Cell p = null;
-        Color c = null;
-        World instance = null;
-        boolean expResult = false;
+        Cell p = new Cell(3, 3);
+        Color c = Color.RED;
+        Cell[][] customWorld = new Cell[150][150];
+        for (int i = 0; i < 150; i++) {
+            for (int j = 0; j < 150; j++) {
+                customWorld[i][j] = new Cell(i, j);
+            }
+        }
+        World instance = new World(customWorld);
+        AntHill a = new AntHill(instance, p, c);
+        boolean expResult = true;
         boolean result = instance.anthill_at(p, c);
         assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
     }
 
     /**
@@ -430,13 +647,20 @@ public class WorldTest {
     @Test
     public void testSet_marker_at() {
         System.out.println("set_marker_at");
-        Cell p = null;
-        Color c = null;
-        int i = 0;
-        World instance = null;
-        instance.set_marker_at(p, c, i);
+        Cell p = new Cell(3, 3);
+        Color c = Color.RED;
+        int z = 3;
+        Cell[][] customWorld = new Cell[150][150];
+        for (int i = 0; i < 150; i++) {
+            for (int j = 0; j < 150; j++) {
+                customWorld[i][j] = new Cell(i, j);
+            }
+        }
+        World instance = new World(customWorld);
+        instance.set_marker_at(p, c, z);
+        boolean result = instance.check_marker_at(p, c, z);
+        assertTrue(result);
         // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
     }
 
     /**
@@ -445,30 +669,21 @@ public class WorldTest {
     @Test
     public void testClear_marker_at() {
         System.out.println("clear_marker_at");
-        Cell p = null;
-        Color c = null;
-        int i = 0;
-        World instance = null;
-        instance.clear_marker_at(p, c, i);
+        Cell p = new Cell(3, 3);
+        Color c = Color.RED;
+        int z = 3;
+        Cell[][] customWorld = new Cell[150][150];
+        for (int i = 0; i < 150; i++) {
+            for (int j = 0; j < 150; j++) {
+                customWorld[i][j] = new Cell(i, j);
+            }
+        }
+        World instance = new World(customWorld);
+        instance.set_marker_at(p, c, z);
+        instance.clear_marker_at(p, c, z);
+        boolean result = instance.check_marker_at(p, c, z);
+        assertFalse(result);
         // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of check_marker_at method, of class World.
-     */
-    @Test
-    public void testCheck_marker_at() {
-        System.out.println("check_marker_at");
-        Cell p = null;
-        Color c = null;
-        int i = 0;
-        World instance = null;
-        boolean expResult = false;
-        boolean result = instance.check_marker_at(p, c, i);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
     }
 
     /**
@@ -477,25 +692,19 @@ public class WorldTest {
     @Test
     public void testCheck_any_marker_at() {
         System.out.println("check_any_marker_at");
-        Cell p = null;
-        Color c = null;
-        World instance = null;
-        boolean expResult = false;
+        Cell p = new Cell(3, 3);
+        Color c = Color.RED;
+        int z = 3;
+        Cell[][] customWorld = new Cell[150][150];
+        for (int i = 0; i < 150; i++) {
+            for (int j = 0; j < 150; j++) {
+                customWorld[i][j] = new Cell(i, j);
+            }
+        }
+        World instance = new World(customWorld);
+        instance.set_marker_at(p, c, z);
         boolean result = instance.check_any_marker_at(p, c);
-        assertEquals(expResult, result);
+        assertTrue(result);
         // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of printWorld method, of class World.
-     */
-    @Test
-    public void testPrintWorld() {
-        System.out.println("printWorld");
-        World instance = null;
-        instance.printWorld();
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
     }
 }
