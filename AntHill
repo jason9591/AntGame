@@ -1,34 +1,56 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package antgame;
 
 /**
  *
- * @author ap487
+ * @author team3
  */
 public class AntHill {
 
     private Color color;
     private Cell cell;
-    
-    public enum Color {
-        RED,
-        BLACK
-    }
+    Ant a;
+    World w;
 
-
-    public AntHill(Cell cell, Color color) {
+    /**
+     *
+     * @param w
+     * @param cell
+     * @param c
+     */
+    public AntHill(World w, Cell cell, Color c) {
+        this.w = w;
         this.cell = cell;
-        this.color = color;
+        color = c;
+        if (color == c.RED) {
+            a = new Ant(w, cell, color.RED);
+        } else {
+            a = new Ant(w, cell, color.BLACK);
+        }
+        cell.set_anthill(this);
     }
 
+    /**
+     *
+     * @return
+     */
     public Color getColor() {
         return color;
     }
 
+    /**
+     *
+     * @return
+     */
     public Cell getCell() {
         return cell;
     }
+
+    public void setColor(Color color) {
+        this.color = color;
+    }
+
+    public Ant getA() {
+        return a;
+    }
+
 }
