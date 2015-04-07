@@ -5,7 +5,6 @@
  */
 package antgame;
 
-import antgame.AntHill.Color;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -44,12 +43,10 @@ public class AntTest {
     @Test
     public void testOther_color() {
         System.out.println("other_color");
-        AntHill.Color c = Color.RED;
-        Cell pos = new Cell(0, 1);
-        World w = new World();
-        Ant instance = new Ant(w, pos);
-        AntHill.Color expResult = Color.BLACK;
-        AntHill.Color result = instance.other_color(c);
+        Color c = new Red();
+        Cell pos = new Cell(0, 1);        
+        Color expResult = new Black();
+        Color result = c.other_color(c);
         assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
     }
@@ -61,8 +58,15 @@ public class AntTest {
     public void testSet_state() {
         System.out.println("set_state");
         Cell pos = new Cell(0, 1);
-        World w = new World();
-        Ant a = new Ant(w, pos);
+        Color c = new Red();
+        Cell[][] customWorld = new Cell[150][150];
+        for (int i = 0; i < 150; i++) {
+            for (int j = 0; j < 150; j++) {
+                customWorld[i][j] = new Cell(i, j);
+            }
+        }
+        World w = new World(customWorld);
+        Ant a = new Ant(w, c);
         int s = 0;
         a.set_state(a, s);
         int result = a.state(a);
@@ -77,8 +81,15 @@ public class AntTest {
     public void testSet_resting() {
         System.out.println("set_resting");
         Cell pos = new Cell(0, 1);
-        World w = new World();
-        Ant a = new Ant(w, pos);
+        Color c = new Red();
+        Cell[][] customWorld = new Cell[150][150];
+        for (int i = 0; i < 150; i++) {
+            for (int j = 0; j < 150; j++) {
+                customWorld[i][j] = new Cell(i, j);
+            }
+        }
+        World w = new World(customWorld);
+        Ant a = new Ant(w, c);
         int r = 0;
         a.set_resting(a, r);
         int result = a.resting(a);
@@ -93,8 +104,15 @@ public class AntTest {
     public void testSet_direction() {
         System.out.println("set_direction");
         Cell pos = new Cell(0, 1);
-        World w = new World();
-        Ant a = new Ant(w, pos);
+        Color c = new Red();
+        Cell[][] customWorld = new Cell[150][150];
+        for (int i = 0; i < 150; i++) {
+            for (int j = 0; j < 150; j++) {
+                customWorld[i][j] = new Cell(i, j);
+            }
+        }
+        World w = new World(customWorld);
+        Ant a = new Ant(w, c);
         int d = 0;
         a.set_direction(a, d);
         int result = a.direction(a);
@@ -110,8 +128,15 @@ public class AntTest {
     public void testSet_has_food() {
         System.out.println("set_has_food");
         Cell pos = new Cell(0, 1);
-        World w = new World();
-        Ant a = new Ant(w, pos);
+        Color c = new Red();
+        Cell[][] customWorld = new Cell[150][150];
+        for (int i = 0; i < 150; i++) {
+            for (int j = 0; j < 150; j++) {
+                customWorld[i][j] = new Cell(i, j);
+            }
+        }
+        World w = new World(customWorld);
+        Ant a = new Ant(w, c);
         boolean b = false;
         a.set_has_food(a, b);
         boolean result = a.has_food(a);
@@ -125,12 +150,17 @@ public class AntTest {
     @Test
     public void testAdjacent_ants() {
         System.out.println("adjacent_ants");
-        Cell p = new Cell(0, 0);
-        Cell pos = new Cell(0, 1);
-        World w = new World();
-        AntHill.Color c = Color.RED;
-        Ant instance = new Ant(w, p);
-        Ant a = new Ant(w, pos);
+        Cell p = new Cell(1, 1);
+        Color c = new Red();
+        Cell[][] customWorld = new Cell[150][150];
+        for (int i = 0; i < 150; i++) {
+            for (int j = 0; j < 150; j++) {
+                customWorld[i][j] = new Cell(i, j);
+            }
+        }
+        World w = new World(customWorld);
+        Ant a = new Ant(w, c);
+        Ant instance = new Ant(w, c);
         int expResult = 0;
         int result = instance.adjacent_ants(p, c);
         assertEquals(expResult, result);
@@ -143,12 +173,16 @@ public class AntTest {
     @Test
     public void testCheck_for_surrounded_ant_at() {
         System.out.println("check_for_surrounded_ant_at");
-        Cell p = new Cell(0, 0);
-        Cell pos = new Cell(0, 1);
-        World w = new World();
-        AntHill.Color c = Color.RED;
-        Ant instance = new Ant(w, p);
-        Ant a = new Ant(w, pos);
+        Cell p = new Cell(5, 5);
+        Color c = new Red();
+        Cell[][] customWorld = new Cell[150][150];
+        for (int i = 0; i < 150; i++) {
+            for (int j = 0; j < 150; j++) {
+                customWorld[i][j] = new Cell(i, j);
+            }
+        }
+        World w = new World(customWorld);
+        Ant instance = new Ant(w, c);
         instance.check_for_surrounded_ant_at(p);
         // TODO review the generated test code and remove the default call to fail.
     }
@@ -161,9 +195,16 @@ public class AntTest {
         System.out.println("check_for_surrounded_ants");
         Cell p = new Cell(0, 0);
         Cell pos = new Cell(0, 1);
-        World w = new World();        
-        Ant instance = new Ant(w, p);
-        Ant a = new Ant(w, pos);
+        Color c = new Red();
+        Cell[][] customWorld = new Cell[150][150];
+        for (int i = 0; i < 150; i++) {
+            for (int j = 0; j < 150; j++) {
+                customWorld[i][j] = new Cell(i, j);
+            }
+        }
+        World w = new World(customWorld);
+        Ant a = new Ant(w, c);       
+        Ant instance = new Ant(w, c);
         instance.check_for_surrounded_ants(p);
         // TODO review the generated test code and remove the default call to fail.
     }
@@ -175,9 +216,18 @@ public class AntTest {
     public void testGetCell() {
         System.out.println("getCell");
         Cell p = new Cell(0, 0);
-        World w = new World();        
-        Ant instance = new Ant(w, p);        
+        Color c = new Red();
+        Cell[][] customWorld = new Cell[150][150];
+        for (int i = 0; i < 150; i++) {
+            for (int j = 0; j < 150; j++) {
+                customWorld[i][j] = new Cell(i, j);
+            }
+        }
+        World w = new World(customWorld);   
+        AntHill instance = new AntHill(w, p, c);        
         Cell result = instance.getCell();
+        System.out.println(result.getX());
+        System.out.println(result.getY());
         assertEquals(p, result);
         // TODO review the generated test code and remove the default call to fail.
     }
@@ -189,8 +239,15 @@ public class AntTest {
     public void testGetId() {
         System.out.println("getId");
         Cell p = new Cell(0, 0);
-        World w = new World(); 
-        Ant instance = new Ant(w,p);
+        Color c = new Red();
+        Cell[][] customWorld = new Cell[150][150];
+        for (int i = 0; i < 150; i++) {
+            for (int j = 0; j < 150; j++) {
+                customWorld[i][j] = new Cell(i, j);
+            }
+        }
+        World w = new World(customWorld);
+        Ant instance = new Ant(w,c);
         int expResult = 0;
         int result = instance.getId();
         assertEquals(expResult, result);
