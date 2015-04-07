@@ -8,42 +8,70 @@ package antgame;
  *
  */
 public class Cond {
+    public String toString(){
+        return null;
+    }
 }
 
 /**
  *
  */
 class Friend extends Cond {
+    @Override
+    public String toString() {
+        return "Friend";
+    }
 };
 
 /**
  *
  */
 class Foe extends Cond {
+    @Override
+    public String toString() {
+        return "Foe";
+    }
 };
 
 /**
  *
  */
 class FriendWithFood extends Cond {
+    @Override
+    public String toString() {
+        return "FriendWithFood";
+    }
 };
+
 
 /**
  *
  */
 class FoeWithFood extends Cond {
+    @Override
+    public String toString() {
+        return "FoeWithFood";
+    }
 };
 
 /**
  *
  */
 class Food extends Cond {
+    @Override
+    public String toString() {
+        return "Food";
+    }
 };
 
 /**
  *
  */
 class Rock extends Cond {
+    @Override
+    public String toString() {
+        return "Rock";
+    }
 };
 
 /**
@@ -68,22 +96,39 @@ class Marker extends Cond {
     public int getI() {
         return i;
     }
+    
+    @Override
+    public String toString() {
+        return "Marker";
+    }
 };
 
 /**
  *
  */
 class FoeMarker extends Cond {
+    @Override
+    public String toString() {
+        return "FoeMarker";
+    }
 };
 
 /**
  *
  */
 class Home extends Cond {
+    @Override
+    public String toString() {
+        return "Home";
+    }
 };
 
 /**
  *
  */
 class FoeHome extends Cond {
+    @Override
+    public String toString() {
+        return "FoeHome";
+    }
 };
