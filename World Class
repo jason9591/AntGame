@@ -1,59 +1,237 @@
 package antgame;
 
+import static antgame.Sense.Dir.HERE;
+import static antgame.Turn.Left_Right.LEFT;
+import java.math.BigInteger;
 import java.util.ArrayList;
 
+/**
+ *
+ * @author team3
+ */
 public class World {
 
-    private int dir;
+//    private int dir;
     private ArrayList<Ant> ants = new ArrayList<>();
+    Turn.Left_Right lr;
+    Cell[][] world;
+    ArrayList<Instruction> redBrain;
+    ArrayList<Instruction> blackBrain;
 
-    public enum left_or_right {
+    /**
+     *
+     * @param world
+     */
+    public World(Cell[][] world) {
+        this.world = world;
+    }
 
-        LEFT, RIGHT
-    };
+    /**
+     *
+     * @param args
+     */
+    public static void main(String[] args) {
+        Cell[][] customWorld = new Cell[150][150];
+        for (int i = 0; i < 150; i++) {
+            for (int j = 0; j < 150; j++) {
+                customWorld[i][j] = new Cell(i, j);
+            }
+        }
+        World w = new World(customWorld);
+        w.printWorld();
 
-    public enum sense_dir {
+    }
 
-        HERE, AHEAD, LEFTAHEAD, RIGHTAHEAD
-    };
+    /**
+     *
+     * @param id
+     */
+    public void step(int id) {
+        int i;
+        int st;
+        int st1;
+        int st2;
+        if (ant_is_alive(id)) {
+            Cell p = find_ant(id);
+            Ant a = ant_at(p);
+            if (a.resting(a) > 0) {
+                a.set_resting(a, a.resting(a) - 1);
+            } else {
+                Instruction instruction = get_instruction(a.color(a), a.state(a));
+                switch (instruction.toString()) {
+                    case "Sense":
+                        Sense senseInstruction = (Sense) instruction;
+                        Cond cond = senseInstruction.getCond();
+                        Sense.Dir sensedir = senseInstruction.getSensedir();
+                        st = senseInstruction.getSt();
+                        st2 = senseInstruction.getSt2();
 
+                        Cell sensedp = sensed_cell(p, a.getDirection(), sensedir);
+                        if (cell_matches(sensedp, cond, a.color)) {
+                            a.set_state(a, st);
+                        } else {
+                            a.set_state(a, st2);
+                        }
+                        break;
+                    case "Mark":
+                        Mark markInstruction = (Mark) instruction;
+                        st = markInstruction.getSt();
+                        i = markInstruction.getI();
+                        set_marker_at(p, a.color(a), i);
+                        a.set_state(a, st);
+                        break;
+                    case "Unmark":
+                        Unmark unmarkInstruction = (Unmark) instruction;
+                        st = unmarkInstruction.getSt();
+                        i = unmarkInstruction.getI();
+                        clear_marker_at(p, a.color(a), i);
+                        a.set_state(a, st);
+                        break;
+                    case "Pickup":
+                        PickUp pickupInstruction = (PickUp) instruction;
+                        st1 = pickupInstruction.getSt1();
+                        st2 = pickupInstruction.getSt2();
+                        if (a.has_food(a) || food_at(p) == 0) {
+                            a.set_state(a, st2);
+                        } else {
+                            set_food_at(p, food_at(p) - 1);
+                            a.set_has_food(a, true);
+                            a.set_state(a, st1);
+                        }
+                        break;
+                    case "Drop":
+                        Drop dropInstruction = (Drop) instruction;
+                        st = dropInstruction.getSt();
+                        if (a.has_food(a)) {
+                            set_food_at(p, food_at(p) + 1);
+                            a.set_has_food(a, true);
+                        }
+                        a.set_state(a, st);
+                        break;
+                    case "Turn":
+                        Turn turnInstruction = (Turn) instruction;
+                        lr = turnInstruction.getLr();
+                        st = turnInstruction.getSt();
+                        a.set_direction(a, turn(lr, a.getDirection()));//Conflict
+                        a.set_state(a, st);
+                        break;
+                    case "Move":
+                        Move moveInstruction = (Move) instruction;
+                        st = moveInstruction.getSt();
+                        st2 = moveInstruction.getSt2();
+
+                        Cell newp = adjacent_cell(p, a.getDirection());
+                        if (rocky(p) || some_ant_is_at(p)) {
+                            a.set_state(a, st2);
+                        } else {
+                            clear_ant_at(p);
+                            set_ant_at(newp, a);
+                            a.set_state(a, st);
+                            a.set_resting(a, 14);
+                            a.check_for_surrounded_ants(newp);
+                        }
+                        break;
+                    case "Flip":
+                        Flip flipInstruction = (Flip) instruction;
+                        int pp = flipInstruction.getP();
+                        st = flipInstruction.getSt();
+                        st2 = flipInstruction.getSt2();
+
+                        if (pp == 0) {
+                            a.set_state(a, st);
+                        } else {
+                            a.set_state(a, st2);
+                        }
+                        break;
+                }
+            }
+        }
+    }
+
+    /**
+     *
+     * @param pos
+     * @param cond
+     * @param c
+     * @return
+     */
+    public boolean cell_matches(Cell pos, Cond cond, Color c) {
+        if (pos.isRocky()) {
+            return cond.getClass().isInstance(Rock.class);
+        } else {
+            switch (cond.toString()) {
+                case "Friend":
+                    return some_ant_is_at(pos) && (ant_at(pos).color) == c;
+                case "Foe":
+                    return some_ant_is_at(pos) && (ant_at(pos).color) != c;
+                case "FriendWithFood":
+                    return some_ant_is_at(pos) && (ant_at(pos).color) == c && (ant_at(pos).has_food);
+                case "FoeWithFood":
+                    return some_ant_is_at(pos) && (ant_at(pos).color) != c && (ant_at(pos).has_food);
+                case "Food":
+                    return food_at(pos) > 0;
+                case "Rock":
+                    return false;
+                case "Marker":
+                    check_marker_at(pos, c, ((Marker) cond).getI());
+                case "FoeMarker":
+                    check_any_marker_at(pos, c.other_color(c));
+                    return true;
+                case "Home":
+                    anthill_at(pos, c);
+                    return true;
+                case "FoeHome":
+                    anthill_at(pos, c.other_color(c));
+                    return true;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     *
+     * @param p
+     * @param d
+     * @return
+     */
     public Cell adjacent_cell(Cell p, int d) {
         int currentX = p.getX();
         int currentY = p.getY();
-        Cell newCell = null; //Initialize new Cellition variable
+        Cell newCell = null; //Initialize new Cell variable
         switch (d) {
             case 0:
-                newCell = new Cell(currentX + 1, currentY);
+                newCell = world[currentX + 1][currentY];
                 break;
             case 1:
                 if (currentX % 2 == 0 && currentY % 2 == 0) {
-                    newCell = new Cell(currentX, currentY + 1);
+                    newCell = world[currentX][currentY + 1];
                 } else {
-                    newCell = new Cell(currentX + 1, currentY + 1);
+                    newCell = world[currentX + 1][currentY + 1];
                 }
                 break;
             case 2:
                 if (currentX % 2 == 0 && currentY % 2 == 0) {
-                    newCell = new Cell(currentX - 1, currentY + 1);
+                    newCell = world[currentX - 1][currentY + 1];
                 } else {
-                    newCell = new Cell(currentX, currentY + 1);
+                    newCell = world[currentX][currentY + 1];
                 }
                 break;
             case 3:
-                newCell = new Cell(currentX - 1, currentY);
+                newCell = world[currentX - 1][currentY];
                 break;
             case 4:
                 if (currentX % 2 == 0 && currentY % 2 == 0) {
-                    newCell = new Cell(currentX - 1, currentY - 1);
+                    newCell = world[currentX - 1][currentY - 1];
                 } else {
-                    newCell = new Cell(currentX, currentY - 1);
+                    newCell = world[currentX][currentY - 1];
                 }
                 break;
             case 5:
                 if (currentX % 2 == 0 && currentY % 2 == 0) {
-                    newCell = new Cell(currentX, currentY - 1);
+                    newCell = world[currentX][currentY - 1];
                 } else {
-                    newCell = new Cell(currentX + 1, currentY - 1);
+                    newCell = world[currentX + 1][currentY - 1];
                 }
                 break;
             default:
@@ -63,7 +241,14 @@ public class World {
         return newCell;
     }
 
-    public int turn(left_or_right lr, int d) {
+    /**
+     * This method return a suitably adjusted direction for the ant to turn
+     *
+     * @param lr determine whether the ant can turn left or right
+     * @param d The direction we want the ant to turn
+     * @return
+     */
+    public int turn(Turn.Left_Right lr, int d) {
         int adjustedDir = -1;
         switch (lr) {
             case LEFT:
@@ -75,7 +260,14 @@ public class World {
         return adjustedDir;
     }
 
-    public Cell sensed_cell(Cell p, int d, sense_dir sd) {
+    /**
+     *
+     * @param p
+     * @param d
+     * @param sd
+     * @return
+     */
+    public Cell sensed_cell(Cell p, int d, Sense.Dir sd) {
         Cell sensed_cell = null;
         switch (sd) {
             case HERE:
@@ -85,36 +277,83 @@ public class World {
                 sensed_cell = adjacent_cell(p, d);
                 break;
             case LEFTAHEAD:
-                sensed_cell = adjacent_cell(p, turn(left_or_right.LEFT, d));
+                sensed_cell = adjacent_cell(p, turn(Turn.Left_Right.LEFT, d));
                 break;
             case RIGHTAHEAD:
-                sensed_cell = adjacent_cell(p, turn(left_or_right.RIGHT, d));
+                sensed_cell = adjacent_cell(p, turn(Turn.Left_Right.RIGHT, d));
                 break;
         }
         return sensed_cell;
 
     }
 
+    /**
+     *
+     * @param n
+     * @return
+     */
+    public int randomint(int n) {
+        BigInteger[] seed = new BigInteger[n + 4];
+        BigInteger[] x = new BigInteger[n];
+        seed[0] = BigInteger.valueOf(n);
+        for (int i = 0; i < n + 3; i++) {
+            seed[i + 1] = seed[i].multiply(BigInteger.valueOf(22695477)).add(BigInteger.valueOf(1));
+        }
+        for (int i = 0; i < n; i++) {
+            x[i] = (seed[i + 4].divide(BigInteger.valueOf(65536)).mod(BigInteger.valueOf(n)));
+        }
+        return x[n - 1].intValue();
+    }
+
+    /**
+     *
+     * @param p
+     * @return
+     */
     public boolean rocky(Cell p) {
         return p.isRocky();
     }
 
+    /**
+     *
+     * @param p
+     * @return
+     */
     public boolean some_ant_is_at(Cell p) {
         return p.hasAnt();
     }
 
+    /**
+     *
+     * @param p
+     * @return
+     */
     public Ant ant_at(Cell p) {
         return p.getAnt();
     }
 
+    /**
+     *
+     * @param p
+     * @param a
+     */
     public void set_ant_at(Cell p, Ant a) {
         p.setAnt(a);
     }
 
+    /**
+     *
+     * @param p
+     */
     public void clear_ant_at(Cell p) {
         p.clearAnt();
     }
 
+    /**
+     *
+     * @param id
+     * @return
+     */
     public boolean ant_is_alive(int id) {
         for (Ant a : ants) {
             if (a.getId() == id) {
@@ -124,6 +363,11 @@ public class World {
         return false;
     }
 
+    /**
+     *
+     * @param id
+     * @return
+     */
     public Cell find_ant(int id) {
         for (Ant a : ants) {
             if (a.getId() == id) {
@@ -133,19 +377,127 @@ public class World {
         return null;
     }
 
+    /**
+     *
+     * @param p
+     */
     public void kill_ant_at(Cell p) {
         clear_ant_at(p);
     }
 
+    /**
+     *
+     * @param p
+     * @return
+     */
     public int food_at(Cell p) {
         return p.getAmountOfFood();
     }
 
+    /**
+     *
+     * @param p
+     * @param f
+     */
     public void set_food_at(Cell p, int f) {
         p.set_food(f);
     }
 
-    public boolean anthill_at(Cell p, AntHill.Color c) {
+    /**
+     *
+     * @param p
+     * @param c
+     * @return
+     */
+    public boolean anthill_at(Cell p, Color c) {
         return p.has_anthill() && c == p.getAntHill().getColor();
+    }
+
+    /**
+     *
+     * @param p
+     * @param c
+     * @param i
+     */
+    public void set_marker_at(Cell p, Color c, int i) {
+        p.set_marker_at(c, i);
+    }
+
+    /**
+     *
+     * @param p
+     * @param c
+     * @param i
+     */
+    public void clear_marker_at(Cell p, Color c, int i) {
+        p.clear_marker_at(c, i);
+    }
+
+    /**
+     *
+     * @param p
+     * @param c
+     * @param i
+     * @return
+     */
+    public boolean check_marker_at(Cell p, Color c, int i) {
+        return p.check_marker_at(c, i);
+    }
+
+    /**
+     *
+     * @param p
+     * @param c
+     * @return
+     */
+    public boolean check_any_marker_at(Cell p, Color c) {
+        return p.check_any_marker_at(c);
+    }
+
+    /**
+     *
+     * @param color
+     * @param state
+     * @return
+     */
+    public Instruction get_instruction(Color color, int state) {
+        Instruction instruction = null;
+        switch (color) {
+            case RED:
+                instruction = redBrain.get(state);
+                break;
+            case BLACK:
+                instruction = blackBrain.get(state);
+                break;
+        }
+        return instruction;
+    }
+
+    /**
+     *
+     * @param redBrain
+     */
+    public void setRedBrain(ArrayList<Instruction> redBrain) {
+        this.redBrain = redBrain;
+    }
+
+    /**
+     *
+     * @param blackBrain
+     */
+    public void setBlackBrain(ArrayList<Instruction> blackBrain) {
+        this.blackBrain = blackBrain;
+    }
+
+    /**
+     *
+     */
+    public void printWorld() {
+        for (Cell[] world1 : world) {
+            for (int j = 0; j < world.length; j++) {
+                System.out.print(world1[j].toString());
+            }
+            System.out.println();
+        }
     }
 }
