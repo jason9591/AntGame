@@ -1,0 +1,31 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package antgame;
+
+/**
+ *
+ * @author bps23
+ */
+public enum Color {
+
+    RED,
+    BLACK;
+
+    /**
+     *
+     * @param c
+     * @return
+     */
+    public Color other_color(Color c) {
+        switch (c) {
+            case RED:
+                return BLACK;
+            case BLACK:
+                return RED;
+        }
+        return null;
+    }
+
+}
