@@ -1,14 +1,8 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package antgame;
-
-import antgame.AntHill.Color;
 
 /**
  *
- * @author ap487
+ * @author team3
  */
 public class Cell {
 
@@ -20,26 +14,52 @@ public class Cell {
     private Ant ant;
     private int amountOfFood;
     private AntHill antHill;
-    private final Marker[] redMarker = new Marker[5];
-    private final Marker[] blackMarker = new Marker[5];
+    private boolean markerAtCell;
+    private int[] redMarker;
+    private int[] blackMarker;
 
+    /**
+     *
+     * @param x
+     * @param y
+     */
     public Cell(int x, int y) {
         this.x = x;
         this.y = y;
+        antAtCell = false;
+        hillAtCell = false;
+        isRocky = false;
+        amountOfFood = 0;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getX() {
         return x;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getY() {
         return y;
     }
 
+    /**
+     *
+     * @return
+     */
     public boolean hasAnt() {
         return antAtCell;
     }
 
+    /**
+     *
+     * @param a
+     */
     public void setAnt(Ant a) {
         ant = a;
         antAtCell = true;
@@ -47,105 +67,178 @@ public class Cell {
 
     }
 
+    /**
+     *
+     * @return
+     */
     public Ant getAnt() {
         return ant;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getAmountOfFood() {
         return amountOfFood;
     }
 
+    /**
+     *
+     * @param food
+     */
     public void set_food(int food) {
-        amountOfFood += food;
+        if (!isRocky) {
+            amountOfFood += food;
+        }
     }
 
+    /**
+     *
+     * @param ah
+     */
     public void set_anthill(AntHill ah) {
-        antHill = ah;
-        hillAtCell = true;
+        if (!isRocky) {
+            antHill = ah;
+            hillAtCell = true;
+            antAtCell = true;
+        }
     }
 
+    /**
+     *
+     * @return
+     */
     public boolean has_anthill() {
         return hillAtCell;
     }
 
+    /**
+     *
+     * @return
+     */
     public AntHill getAntHill() {
         return antHill;
     }
-    
-    public void setRocky(){
+
+    /**
+     *
+     * @return
+     */
+    public int[] getRedMarker() {
+        return redMarker;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public int[] getBlackMarker() {
+        return blackMarker;
+    }
+
+    /**
+     *
+     */
+    public void setRocky() {
         isRocky = true;
     }
-    
-    public boolean isRocky(){
+
+    /**
+     *
+     * @return
+     */
+    public boolean isRocky() {
         return isRocky;
     }
 
+    /**
+     *
+     */
     public void clearAnt() {
         ant = null;
         antAtCell = false;
         amountOfFood += 3;
     }
-    
-    public void set_marker_at(Color c, Marker i)
-    {
-        switch(c){
+
+    /**
+     *
+     * @param c
+     * @param i
+     */
+    public void set_marker_at(Color c, int i) {
+        switch (c) {
             case RED:
-                redMarker[i.getType()] = i;
+                redMarker[i] = 1;
                 break;
             case BLACK:
-                blackMarker[i.getType()] = i;
+                blackMarker[i] = 1;
+                break;
+        }
+        markerAtCell = true;
+    }
+
+    /**
+     *
+     * @param c
+     * @param i
+     */
+    public void clear_marker_at(Color c, int i) {
+        switch (c) {
+            case RED:
+                redMarker[i] = -1;
+                break;
+            case BLACK:
+                blackMarker[i] = -1;
                 break;
         }
     }
-    
-    public void clear_marker_at(Color c, Marker i)
-    {
-        switch(c){
+
+    /**
+     *
+     * @param c
+     * @param i
+     * @return
+     */
+    public boolean check_marker_at(Color c, int i) {
+        switch (c) {
             case RED:
-                redMarker[i.getType()] = null;
+                if (redMarker[i] == 1) {
+                    return true;
+                }
                 break;
             case BLACK:
-                blackMarker[i.getType()] = null;
-                break;
-        }
-    }
-    
-    public boolean check_marker_at(Color c, Marker i)
-    {
-        switch(c){
-            case RED:
-                if(redMarker[i.getType()] != null)
+                if (blackMarker[i] == 1) {
                     return true;
+                }
                 break;
-            case BLACK:
-                if(blackMarker[i.getType()] != null)
-                    return true;
-                break;        
         }
         return false;
     }
-    
-    public boolean check_any_marker_at(Color c)
-    {
-        int i = 0;
+
+    /**
+     *
+     * @param c
+     * @return
+     */
+    public boolean check_any_marker_at(Color c) {
         boolean found = false;
-        switch(c){
-            
+        switch (c) {
             case RED:
-                while(!found && i < 6){
-                    if(redMarker[i] != null)
+                for (int i = 0; i < redMarker.length; i++) {
+                    if (redMarker[i] == 1) {
                         found = true;
-                    i++;
+                    }
                 }
                 break;
-                
+
             case BLACK:
-                while(!found && i < 6){
-                    if(blackMarker[i] != null)
+                for (int i = 0; i < blackMarker.length; i++) {
+                    if (blackMarker[i] == 1) {
                         found = true;
-                    i++;
+                    }
                 }
-                break;        
+                break;
         }
         return found;
     }
