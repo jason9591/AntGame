@@ -1,0 +1,143 @@
+package antgame;
+
+import java.util.Random;
+
+/**
+ *
+ * @author Team 3
+ */
+public class WorldGenerator {
+
+    private final int width;
+    private final int height;
+    private final Cell[][] worldCells;
+    private World world;
+
+    /**
+     *
+     * @param args
+     */
+    public static void main(String[] args){
+        WorldGenerator wg = new WorldGenerator(150, 150);
+        wg.setRocky(200);
+        wg.setRedAntHill(5);
+        wg.displayWorld();
+
+    }
+    /**
+     * Generate a random worldCells. The worldCells perimeter is automatically set to rocky cells
+     *
+     * @param width Width of the worldCells to be created
+     * @param height Height of the worldCells to be created
+     */
+    public WorldGenerator(int width, int height) {
+        this.width = width;
+        this.height = height;
+        worldCells = new Cell[width][height];
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                worldCells[i][j] = new Cell(i, j);
+                //Set perimeter as rocky
+                if (i == 0 || j == 0 || i == width - 1 || j == height - 1) {
+                    worldCells[i][j].setRocky();
+
+                }
+            }
+        }
+    }
+
+    /**
+     * Generate rocky cells (excluding the perimeter which has been set rocky by
+     * default)
+     *
+     * @param rocky The number of cells to be generated as rocky
+     */
+    public void setRocky(int rocky) {
+        for (int i = 0; i < rocky; i++) {
+            worldCells[generateRandom(width - 2)][generateRandom(height - 2)].setRocky();
+        }
+    }
+
+    /**
+     * Generate random food in cells
+     *
+     * @param food The number of cell that food will be generated on
+     */
+    public void setNumFood(int food) {
+        for (int i = 0; i < food; i++) {
+            worldCells[generateRandom(width - 2)][generateRandom(height - 2)].set_food(generateRandom(5));
+        }
+    }
+
+    /**
+     * Generate random red ant hills
+     *
+     * @param redAnthill The number of red ant hills to generate
+     */
+    public void setRedAntHill(int redAnthill) {
+        for (int i = 0; i < redAnthill; i++) {
+            int location = generateRandom(width - 7);
+            System.out.println(location);
+            for (int j = location; j < location + 5; j++) {
+                for (int k = j; k < j + 5; k++) {
+                    AntHill ah = new AntHill(world, worldCells[j][k], Color.RED);
+                    worldCells[j][k].set_anthill(ah);
+                }
+            }
+        }
+    }
+
+    /**
+     * Generate random black ant hills
+     *
+     * @param blackAnthill The number of black ant hills to generate
+     */
+    public void setBlackAntHill(int blackAnthill) {
+        for (int i = 0; i < blackAnthill; i++) {
+            int location = generateRandom(width - 7);
+            System.out.println(location);
+            for (int j = location; j < location + 5; j++) {
+                for (int k = j; k < j + 5; k++) {
+                    AntHill ah = new AntHill(world, worldCells[j][k], Color.BLACK);
+                    worldCells[j][k].set_anthill(ah);
+                }
+            }
+        }
+    }
+
+    /**
+     * Generates a random number from 0 to an upper bound passed as a parameter
+     *
+     * @param number The upper bound. (eg. if we pass 10 then the method will
+     * generate a random number from 0 to 10)
+     * @return The number generated
+     */
+    public int generateRandom(int number) {
+        Random rn = new Random();
+        int answer = rn.nextInt(number) + 1;
+        return answer;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public World getWorld() {
+        world = new World(worldCells);
+        return world;
+    }
+    
+    
+
+    /**
+     * Method to display the worldCells generated
+     */
+    public void displayWorld() {
+        for (int i = 0; i < 150; i++) {
+            for (int j = 0; j < 150; j++) {
+                System.out.print(worldCells[i][j].has_anthill() + " ");
+            }
+            System.out.println("");
+        }
+    }
+}
