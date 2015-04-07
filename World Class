@@ -346,6 +346,7 @@ public class World {
      * @param p
      */
     public void clear_ant_at(Cell p) {
+        ants.remove(p.getAnt());
         p.clearAnt();
     }
 
@@ -499,5 +500,13 @@ public class World {
             }
             System.out.println();
         }
+    }
+    
+    public void addAnt(Ant a) {
+        ants.add(a);
+    }
+    
+    public ArrayList<Ant> getAnts() {
+        return ants;
     }
 }
