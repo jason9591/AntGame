@@ -5,6 +5,8 @@
  */
 package antgame;
 
+import antgame.Turn.Left_Right;
+import java.util.ArrayList;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -17,6 +19,8 @@ import static org.junit.Assert.*;
  * @author Jason
  */
 public class WorldTest {
+
+    ArrayList<Ant> ant = new ArrayList<>();
 
     public WorldTest() {
     }
@@ -41,13 +45,263 @@ public class WorldTest {
      * Test of step method, of class World.
      */
     @Test
-    public void testStep() {
+    public void testSenseStep() {
         System.out.println("step");
-        int id = 0;
-        World instance = null;
+        int id = 3;
+        Cell pos = new Cell(2, 1);
+        Cond cond = new Friend();
+        Color c = Color.RED;
+        Cell[][] customWorld = new Cell[150][150];
+        for (int i = 0; i < 150; i++) {
+            for (int j = 0; j < 150; j++) {
+                customWorld[i][j] = new Cell(i, j);
+            }
+        }
+        World instance = new World(customWorld, ant);
+        Ant a = new Ant(instance, pos, c);
+        a.setId(id);
+        a.set_resting(a, 0);
+        pos.setAnt(a);
+        instance.addAnt(a);
+        ArrayList<Instruction> instruction;
+        instruction = new ArrayList<>();
+        instruction.add(new Sense(Sense.Dir.HERE, 3, 4, cond));
+        AntBrain ab = new AntBrain(instruction);
+        instance.setRedBrain(ab.getInstructions());
         instance.step(id);
+        int expect = 3;
+        int result = a.state;
+        assertEquals(expect, result);
         // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+    }
+
+    /**
+     * Test of step method, of class World.
+     */
+    @Test
+    public void testPickupStep() {
+        System.out.println("step");
+        int id = 3;
+        Cell pos = new Cell(2, 1);
+        Cond cond = new Friend();
+        Color c = Color.RED;
+        Cell[][] customWorld = new Cell[150][150];
+        for (int i = 0; i < 150; i++) {
+            for (int j = 0; j < 150; j++) {
+                customWorld[i][j] = new Cell(i, j);
+            }
+        }
+        World instance = new World(customWorld, ant);
+        Ant a = new Ant(instance, pos, c);
+        a.setId(id);
+        a.set_resting(a, 0);
+
+        pos.setAnt(a);
+        instance.addAnt(a);
+        ArrayList<Instruction> instruction;
+        instruction = new ArrayList<>();
+        instruction.add(new PickUp(1, 3));
+        AntBrain ab = new AntBrain(instruction);
+        instance.setRedBrain(ab.getInstructions());
+        instance.step(id);
+        int expect = 3;
+        int result = a.state;
+        assertEquals(expect, result);
+        // TODO review the generated test code and remove the default call to fail.
+    }
+
+    /**
+     * Test of step method, of class World.
+     */
+    @Test
+    public void testDropStep() {
+        System.out.println("step");
+        int id = 3;
+        Cell pos = new Cell(2, 1);
+        Cond cond = new Friend();
+        Color c = Color.RED;
+        Cell[][] customWorld = new Cell[150][150];
+        for (int i = 0; i < 150; i++) {
+            for (int j = 0; j < 150; j++) {
+                customWorld[i][j] = new Cell(i, j);
+            }
+        }
+        World instance = new World(customWorld, ant);
+        Ant a = new Ant(instance, pos, c);
+        a.setId(id);
+        a.set_resting(a, 0);
+
+        pos.setAnt(a);
+        instance.addAnt(a);
+        ArrayList<Instruction> instruction;
+        instruction = new ArrayList<>();
+        instruction.add(new Drop(1));
+        AntBrain ab = new AntBrain(instruction);
+        instance.setRedBrain(ab.getInstructions());
+        instance.step(id);
+        int expect = 1;
+        int result = a.state;
+        assertEquals(expect, result);
+        // TODO review the generated test code and remove the default call to fail.
+    }
+
+    /**
+     * Test of step method, of class World.
+     */
+    @Test
+    public void testTurnStep() {
+        System.out.println("step");
+        int id = 3;
+        Cell pos = new Cell(2, 1);
+        Cond cond = new Friend();
+        Color c = Color.RED;
+        Cell[][] customWorld = new Cell[150][150];
+        for (int i = 0; i < 150; i++) {
+            for (int j = 0; j < 150; j++) {
+                customWorld[i][j] = new Cell(i, j);
+            }
+        }
+        World instance = new World(customWorld, ant);
+        Ant a = new Ant(instance, pos, c);
+        a.setId(id);
+        a.set_resting(a, 0);
+
+        pos.setAnt(a);
+        instance.addAnt(a);
+        ArrayList<Instruction> instruction;
+        instruction = new ArrayList<>();
+        Left_Right lr = Left_Right.LEFT;
+        instruction.add(new Turn(lr, 1));
+        AntBrain ab = new AntBrain(instruction);
+        instance.setRedBrain(ab.getInstructions());
+        instance.step(id);
+        int expect = 1;
+        int result = a.state;
+        assertEquals(expect, result);
+        // TODO review the generated test code and remove the default call to fail.
+    }
+
+    public void testMarkStep() {
+        System.out.println("step");
+        int id = 3;
+        Cell pos = new Cell(2, 1);
+        Cond cond = new Friend();
+        Color c = Color.RED;
+        Cell[][] customWorld = new Cell[150][150];
+        for (int i = 0; i < 150; i++) {
+            for (int j = 0; j < 150; j++) {
+                customWorld[i][j] = new Cell(i, j);
+            }
+        }
+        World instance = new World(customWorld, ant);
+        Ant a = new Ant(instance, pos, c);
+        a.setId(id);
+        a.set_resting(a, 0);
+        pos.setAnt(a);
+        //instance.addAnt(a);
+        ArrayList<Instruction> instruction;
+        instruction = new ArrayList<>();
+        instruction.add(new Mark(5, 2));
+        AntBrain ab = new AntBrain(instruction);
+        instance.setRedBrain(ab.getInstructions());
+        instance.step(id);
+        int expect = 2;
+        int result = a.state;
+        assertEquals(expect, result);
+        // TODO review the generated test code and remove the default call to fail.
+    }
+
+    public void testMoveStep() {
+        System.out.println("step");
+        int id = 3;
+        Cell pos = new Cell(2, 1);
+        Cond cond = new Friend();
+        Color c = Color.RED;
+        Cell[][] customWorld = new Cell[150][150];
+        for (int i = 0; i < 150; i++) {
+            for (int j = 0; j < 150; j++) {
+                customWorld[i][j] = new Cell(i, j);
+            }
+        }
+        World instance = new World(customWorld, ant);
+        Ant a = new Ant(instance, pos, c);
+        a.setId(id);
+        a.set_resting(a, 0);
+        pos.setAnt(a);
+        //instance.addAnt(a);
+        ArrayList<Instruction> instruction;
+        instruction = new ArrayList<>();
+        instruction.add(new Move(5, 2));
+        AntBrain ab = new AntBrain(instruction);
+        instance.setRedBrain(ab.getInstructions());
+        instance.step(id);
+        int expect = 2;
+        int result = a.state;
+        assertEquals(expect, result);
+        // TODO review the generated test code and remove the default call to fail.
+    }
+    
+    
+    
+    
+        public void testFlipStep() {
+        System.out.println("step");
+        int id = 3;
+        Cell pos = new Cell(2, 1);
+        Cond cond = new Friend();
+        Color c = Color.RED;
+        Cell[][] customWorld = new Cell[150][150];
+        for (int i = 0; i < 150; i++) {
+            for (int j = 0; j < 150; j++) {
+                customWorld[i][j] = new Cell(i, j);
+            }
+        }
+        World instance = new World(customWorld, ant);
+        Ant a = new Ant(instance, pos, c);
+        a.setId(id);
+        a.set_resting(a, 0);
+        pos.setAnt(a);
+        //instance.addAnt(a);
+        ArrayList<Instruction> instruction;
+        instruction = new ArrayList<>();
+        instruction.add(new Flip(1,2,3));
+        AntBrain ab = new AntBrain(instruction);
+        instance.setRedBrain(ab.getInstructions());
+        instance.step(id);
+        int expect = 3;
+        int result = a.state;
+        assertEquals(expect, result);
+        // TODO review the generated test code and remove the default call to fail.
+    }
+
+    public void testUnMarkStep() {
+        System.out.println("step");
+        int id = 3;
+        Cell pos = new Cell(2, 1);
+        Cond cond = new Friend();
+        Color c = Color.RED;
+        Cell[][] customWorld = new Cell[150][150];
+        for (int i = 0; i < 150; i++) {
+            for (int j = 0; j < 150; j++) {
+                customWorld[i][j] = new Cell(i, j);
+            }
+        }
+        World instance = new World(customWorld, ant);
+        Ant a = new Ant(instance, pos, c);
+        a.setId(id);
+        a.set_resting(a, 0);
+        pos.setAnt(a);
+        //instance.addAnt(a);
+        ArrayList<Instruction> instruction;
+        instruction = new ArrayList<>();
+        instruction.add(new Unmark(5, 2));
+        AntBrain ab = new AntBrain(instruction);
+        instance.setRedBrain(ab.getInstructions());
+        instance.step(id);
+        int expect = 2;
+        int result = a.state;
+        assertEquals(expect, result);
+        // TODO review the generated test code and remove the default call to fail.
     }
 
     /**
@@ -65,7 +319,7 @@ public class WorldTest {
                 customWorld[i][j] = new Cell(i, j);
             }
         }
-        World instance = new World(customWorld);
+        World instance = new World(customWorld, ant);
         pos.set_food(5);
         customWorld[2][1] = pos;
         boolean result = instance.cell_matches(pos, cond, c);
@@ -85,10 +339,11 @@ public class WorldTest {
                 customWorld[i][j] = new Cell(i, j);
             }
         }
-        World instance = new World(customWorld);
+        World instance = new World(customWorld, ant);
         pos.setRocky();
         customWorld[2][1] = pos;
         boolean result = instance.cell_matches(pos, cond, c);
+        System.out.println(result);
         assertTrue(result);
         // TODO review the generated test code and remove the default call to fail.
     }
@@ -108,7 +363,7 @@ public class WorldTest {
                 customWorld[i][j] = new Cell(i, j);
             }
         }
-        World instance = new World(customWorld);
+        World instance = new World(customWorld, ant);
         Ant a = new Ant(instance, pos, c);
         pos.setAnt(a);
         customWorld[2][1] = pos;
@@ -133,7 +388,7 @@ public class WorldTest {
                 customWorld[i][j] = new Cell(i, j);
             }
         }
-        World instance = new World(customWorld);
+        World instance = new World(customWorld, ant);
         Ant a = new Ant(instance, pos, c);
         pos.setAnt(a);
         customWorld[2][1] = pos;
@@ -141,10 +396,8 @@ public class WorldTest {
         assertTrue(result);
         // TODO review the generated test code and remove the default call to fail.
     }
-    
-    
-    
-        /**
+
+    /**
      * Test of cell_matches method, of class World.
      */
     @Test
@@ -160,7 +413,7 @@ public class WorldTest {
                 customWorld[i][j] = new Cell(i, j);
             }
         }
-        World instance = new World(customWorld);
+        World instance = new World(customWorld, ant);
         Ant a = new Ant(instance, pos, c);
         a.set_has_food(a, true);
         pos.setAnt(a);
@@ -169,7 +422,6 @@ public class WorldTest {
         assertTrue(result);
         // TODO review the generated test code and remove the default call to fail.
     }
-
 
     /**
      * Test of cell_matches method, of class World.
@@ -186,7 +438,7 @@ public class WorldTest {
                 customWorld[i][j] = new Cell(i, j);
             }
         }
-        World instance = new World(customWorld);
+        World instance = new World(customWorld, ant);
         Ant a = new Ant(instance, pos, c);
         a.set_has_food(a, true);
         pos.setAnt(a);
@@ -212,7 +464,7 @@ public class WorldTest {
                 customWorld[i][j] = new Cell(i, j);
             }
         }
-        World instance = new World(customWorld);
+        World instance = new World(customWorld, ant);
         pos.set_marker_at(c, x);
         customWorld[2][1] = pos;
         boolean result = instance.cell_matches(pos, cond, c);
@@ -237,14 +489,13 @@ public class WorldTest {
                 customWorld[i][j] = new Cell(i, j);
             }
         }
-        World instance = new World(customWorld);
-        pos.set_marker_at(c, x);
+        World instance = new World(customWorld, ant);
+        instance.set_marker_at(pos, c, x);
         customWorld[2][1] = pos;
         boolean result = instance.cell_matches(pos, cond, c1);
         assertTrue(result);
         // TODO review the generated test code and remove the default call to fail.
     }
-
 
     /**
      * Test of cell_matches method, of class World.
@@ -261,7 +512,7 @@ public class WorldTest {
                 customWorld[i][j] = new Cell(i, j);
             }
         }
-        World instance = new World(customWorld);
+        World instance = new World(customWorld, ant);
         AntHill a = new AntHill(instance, pos, c);
         pos.set_anthill(a);
         customWorld[2][1] = pos;
@@ -269,7 +520,8 @@ public class WorldTest {
         assertTrue(result);
         // TODO review the generated test code and remove the default call to fail.
     }
-        /**
+
+    /**
      * Test of cell_matches method, of class World.
      */
     @Test
@@ -285,7 +537,7 @@ public class WorldTest {
                 customWorld[i][j] = new Cell(i, j);
             }
         }
-        World instance = new World(customWorld);
+        World instance = new World(customWorld, ant);
         AntHill a = new AntHill(instance, pos, c);
         pos.set_anthill(a);
         customWorld[2][1] = pos;
@@ -308,7 +560,7 @@ public class WorldTest {
                 customWorld[i][j] = new Cell(i, j);
             }
         }
-        World instance = new World(customWorld);
+        World instance = new World(customWorld, ant);
         Cell expResult = new Cell(2, 1);
         Cell result = instance.adjacent_cell(p, d);
         System.out.println(result.getX());
@@ -332,7 +584,7 @@ public class WorldTest {
                 customWorld[i][j] = new Cell(i, j);
             }
         }
-        World instance = new World(customWorld);
+        World instance = new World(customWorld, ant);
         int expResult = 1;
         int result = instance.turn(lr, d);
         assertEquals(expResult, result);
@@ -353,7 +605,7 @@ public class WorldTest {
                 customWorld[i][j] = new Cell(i, j);
             }
         }
-        World instance = new World(customWorld);
+        World instance = new World(customWorld, ant);
         int expResult = 3;
         int result = instance.turn(lr, d);
         assertEquals(expResult, result);
@@ -375,7 +627,7 @@ public class WorldTest {
                 customWorld[i][j] = new Cell(i, j);
             }
         }
-        World instance = new World(customWorld);
+        World instance = new World(customWorld, ant);
         Cell expResult = p;
         Cell result = instance.sensed_cell(p, d, sd);
         assertEquals(expResult, result);
@@ -397,7 +649,7 @@ public class WorldTest {
                 customWorld[i][j] = new Cell(i, j);
             }
         }
-        World instance = new World(customWorld);
+        World instance = new World(customWorld, ant);
         Cell expResult = new Cell(3, 2);
         Cell result = instance.sensed_cell(p, d, sd);
 //        System.out.println(result.getX());
@@ -423,7 +675,7 @@ public class WorldTest {
                 customWorld[i][j] = new Cell(i, j);
             }
         }
-        World instance = new World(customWorld);
+        World instance = new World(customWorld, ant);
         Cell expResult = new Cell(2, 1);
         Cell result = instance.sensed_cell(p, d, sd);
         System.out.println(result.getX());
@@ -448,7 +700,7 @@ public class WorldTest {
                 customWorld[i][j] = new Cell(i, j);
             }
         }
-        World instance = new World(customWorld);
+        World instance = new World(customWorld, ant);
         Cell expResult = new Cell(2, 3);
         Cell result = instance.sensed_cell(p, d, sd);
         System.out.println(result.getX());
@@ -471,7 +723,7 @@ public class WorldTest {
                 customWorld[i][j] = new Cell(i, j);
             }
         }
-        World instance = new World(customWorld);
+        World instance = new World(customWorld, ant);
         p.setRocky();
         boolean expResult = true;
         boolean result = instance.rocky(p);
@@ -493,7 +745,7 @@ public class WorldTest {
                 customWorld[i][j] = new Cell(i, j);
             }
         }
-        World instance = new World(customWorld);
+        World instance = new World(customWorld, ant);
         Ant a = new Ant(instance, p, c);
         p.setAnt(a);
         boolean expResult = true;
@@ -516,7 +768,7 @@ public class WorldTest {
                 customWorld[i][j] = new Cell(i, j);
             }
         }
-        World instance = new World(customWorld);
+        World instance = new World(customWorld, ant);
         Ant a = new Ant(instance, p, c);
         instance.set_ant_at(p, a);
         Ant expResult = a;
@@ -539,7 +791,7 @@ public class WorldTest {
                 customWorld[i][j] = new Cell(i, j);
             }
         }
-        World instance = new World(customWorld);
+        World instance = new World(customWorld, ant);
         Ant a = new Ant(instance, p, c);
         instance.set_ant_at(p, a);
         instance.clear_ant_at(p);
@@ -563,7 +815,7 @@ public class WorldTest {
                 customWorld[i][j] = new Cell(i, j);
             }
         }
-        World instance = new World(customWorld);
+        World instance = new World(customWorld, ant);
         Ant a = new Ant(instance, p, c);
         instance.addAnt(a);
         a.setId(id);
@@ -588,7 +840,7 @@ public class WorldTest {
                 customWorld[i][j] = new Cell(i, j);
             }
         }
-        World instance = new World(customWorld);
+        World instance = new World(customWorld, ant);
         Ant a = new Ant(instance, p, c);
         instance.addAnt(a);
         a.setId(id);
@@ -611,7 +863,7 @@ public class WorldTest {
                 customWorld[i][j] = new Cell(i, j);
             }
         }
-        World instance = new World(customWorld);
+        World instance = new World(customWorld, ant);
         instance.set_food_at(p, 5);
         int expResult = 5;
         int result = instance.food_at(p);
@@ -633,7 +885,7 @@ public class WorldTest {
                 customWorld[i][j] = new Cell(i, j);
             }
         }
-        World instance = new World(customWorld);
+        World instance = new World(customWorld, ant);
         AntHill a = new AntHill(instance, p, c);
         boolean expResult = true;
         boolean result = instance.anthill_at(p, c);
@@ -656,7 +908,7 @@ public class WorldTest {
                 customWorld[i][j] = new Cell(i, j);
             }
         }
-        World instance = new World(customWorld);
+        World instance = new World(customWorld, ant);
         instance.set_marker_at(p, c, z);
         boolean result = instance.check_marker_at(p, c, z);
         assertTrue(result);
@@ -678,7 +930,7 @@ public class WorldTest {
                 customWorld[i][j] = new Cell(i, j);
             }
         }
-        World instance = new World(customWorld);
+        World instance = new World(customWorld, ant);
         instance.set_marker_at(p, c, z);
         instance.clear_marker_at(p, c, z);
         boolean result = instance.check_marker_at(p, c, z);
@@ -701,7 +953,7 @@ public class WorldTest {
                 customWorld[i][j] = new Cell(i, j);
             }
         }
-        World instance = new World(customWorld);
+        World instance = new World(customWorld, ant);
         instance.set_marker_at(p, c, z);
         boolean result = instance.check_any_marker_at(p, c);
         assertTrue(result);
