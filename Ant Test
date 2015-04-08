@@ -5,6 +5,7 @@
  */
 package antgame;
 
+import java.util.ArrayList;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -17,6 +18,7 @@ import static org.junit.Assert.*;
  * @author Jason
  */
 public class AntTest {
+    ArrayList<Ant> ant = new ArrayList<>();
 
     public AntTest() {
     }
@@ -65,7 +67,7 @@ public class AntTest {
                 customWorld[i][j] = new Cell(i, j);
             }
         }
-        World w = new World(customWorld);
+        World w = new World(customWorld, ant);
         Ant a = new Ant(w, pos,c);
         int s = 0;
         a.set_state(a, s);
@@ -88,7 +90,7 @@ public class AntTest {
                 customWorld[i][j] = new Cell(i, j);
             }
         }
-        World w = new World(customWorld);
+        World w = new World(customWorld, ant);
         Ant a = new Ant(w, pos,c);
         int r = 0;
         a.set_resting(a, r);
@@ -111,7 +113,7 @@ public class AntTest {
                 customWorld[i][j] = new Cell(i, j);
             }
         }
-        World w = new World(customWorld);
+        World w = new World(customWorld, ant);
         Ant a = new Ant(w, pos,c);
         int d = 0;
         a.set_direction(a, d);
@@ -135,7 +137,7 @@ public class AntTest {
                 customWorld[i][j] = new Cell(i, j);
             }
         }
-        World w = new World(customWorld);
+        World w = new World(customWorld, ant);
         Ant a = new Ant(w, pos,c);
         boolean b = false;
         a.set_has_food(a, b);
@@ -159,7 +161,7 @@ public class AntTest {
                 customWorld[i][j] = new Cell(i, j);
             }
         }
-        World w = new World(customWorld);
+        World w = new World(customWorld, ant);
         Ant a = new Ant(w, pos,c);
         Ant instance = new Ant(w, p,c);
         int expResult = 0;
@@ -183,7 +185,7 @@ public class AntTest {
                 customWorld[i][j] = new Cell(i, j);
             }
         }
-        World w = new World(customWorld);
+        World w = new World(customWorld, ant);
         Ant instance = new Ant(w, p,c);
         instance.check_for_surrounded_ant_at(p);
         // TODO review the generated test code and remove the default call to fail.
@@ -204,7 +206,7 @@ public class AntTest {
                 customWorld[i][j] = new Cell(i, j);
             }
         }
-        World w = new World(customWorld);
+        World w = new World(customWorld, ant);
         Ant a = new Ant(w, p,c);       
         Ant instance = new Ant(w, pos,c);
         instance.check_for_surrounded_ants(pos);
@@ -225,7 +227,7 @@ public class AntTest {
                 customWorld[i][j] = new Cell(i, j);
             }
         }
-        World w = new World(customWorld);   
+        World w = new World(customWorld, ant);   
         AntHill instance = new AntHill(w, p, c);        
         Cell result = instance.getCell();
         System.out.println(result.getX());
@@ -248,7 +250,7 @@ public class AntTest {
                 customWorld[i][j] = new Cell(i, j);
             }
         }
-        World w = new World(customWorld);
+        World w = new World(customWorld, ant);
         Ant instance = new Ant(w,p,c);
         int expResult = 0;
         int result = instance.getId();
