@@ -1,0 +1,111 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package antgame;
+
+import java.util.ArrayList;
+
+/**
+ *
+ * @author bps23
+ */
+public class Contest {
+    int redScore;
+    int blackScore;
+    int numberOfGames;
+    int numberOfPlayers;
+    private AntBrain[] players;
+
+    public AntBrain[] getPlayers() {
+        return players;
+    }
+
+    public void setPlayers(AntBrain[] players) {
+        this.players = players;
+    }
+    int[] wins;
+    boolean isFinished;
+    int nextPlayer;
+    ArrayList<Game> games;
+
+    public boolean isIsFinished() {
+        return isFinished;
+    }
+    World world;
+    
+    public Contest(int numberOfPlayers) {
+        this.numberOfPlayers = numberOfPlayers;
+        players = new AntBrain[numberOfPlayers];
+        wins = new int[numberOfPlayers];
+        setupGames(players);
+    }
+    
+    public void gameEnd() {
+        for(int win: wins) {
+            if (win > numberOfGames + 1) {
+                isFinished = true;
+            }
+            else {
+                newSeries();
+            }
+        }
+    }
+    
+    public void launchNewGame(Game game) {
+        World w = game.getWorld();
+        AntBrain redPlayer = game.getRedPlayer();
+        AntBrain blackPlayer = game.getBlackPlayer();
+        redScore = new Score(w, Color.RED).ComputeScore(w, Color.RED);
+        blackScore = new Score(w, Color.BLACK).ComputeScore(w, Color.BLACK);
+        
+        if (redScore > blackScore) {
+            game.setWinner(game.gameWinner.REDPLAYER);
+        }
+        else if (blackScore > redScore) {
+            game.setWinner(game.gameWinner.BLACKPLAYER);
+        }      
+        else {
+            game.setWinner(game.gameWinner.DRAW);
+        }
+    }
+    
+    public void newSeries() {
+        for (Game game : games) {
+            launchNewGame(game);
+            switch(game.getWinner()) {
+                case REDPLAYER:
+                    for (int i = 0; i < numberOfPlayers; i++) {
+                        if (game.getRedPlayer() == players[i]) {
+                            wins[i]++;
+                        }
+                    }
+                    break;
+                    
+                case BLACKPLAYER:
+                    for (int i = 0; i < numberOfPlayers; i++) {
+                        if (game.getBlackPlayer() == players[i]) {
+                            wins[i]++;
+                        }
+                    }
+                    break;                    
+                case DRAW:
+                    break;
+            }
+        }
+        
+        gameEnd();
+    }
+    
+    public void setupGames(AntBrain[] brains) {
+        int playerNotSet = numberOfPlayers;
+        games = new ArrayList();
+        for(int i = 0; i < numberOfPlayers; i++) {
+            for (int j = playerNotSet; j > 0; j--) {
+                games.add(new Game(players[i], players[j], new WorldGenerator(150,150).getWorld()));
+                games.add(new Game(players[j], players[i], new WorldGenerator(150,150).getWorld()));
+            }
+            playerNotSet--;
+        }
+    }
+}
