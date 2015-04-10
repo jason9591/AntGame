@@ -1,0 +1,35 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package antgame;
+
+import java.util.ArrayList;
+
+/**
+ *
+ * @author bps23
+ */
+public class Score {
+    
+    public Score(World w, Color c) {
+        ComputeScore(w, c);
+    }
+    
+    public int ComputeScore(World w, Color c) {
+        ArrayList<AntHill>anthills = new ArrayList();
+        int scoreInt = 0;
+        switch(c) {
+            case RED:
+                anthills = w.getRedAnthills();
+                break;
+            case BLACK:
+                anthills = w.getBlackAnthills();
+                break;
+        }
+        for (AntHill ah : anthills) {
+            scoreInt += ah.getCell().getAmountOfFood();
+        }
+        return 0;
+    }
+}
