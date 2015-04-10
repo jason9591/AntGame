@@ -1,25 +1,27 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package antgame;
 
+import antgame.errors.InvalidSyntaxException;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
+import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
@@ -32,45 +34,67 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSlider;
+import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 /**
  *
- * @author Alex
+ * @author team3
  */
 public class AntGameGUI {
 
+    /**
+     *
+     * @param args
+     */
     public static void main(String[] args) {
         AntGameGUI gui = new AntGameGUI();
         gui.go();
     }
-
     JFrame gameFrame;
     JFrame welcomeFrame;
     JPanel contentPane;
     JPanel topPanel;
     JPanel rightPanel;
     JPanel centerPanel;
+    JPanel stagesPanel;
     JPanel leftPanel;
     JPanel bottomPanel;
     JLabel infoLabel;
     JButton playButton;
     JButton pauseButton;
+    JButton stage1;
+    JLabel stage1info;
+    JLabel stage2info;
+    JLabel stage3info;
+    JButton stage2;
+    JButton stage3;
     JMenuBar menuBar;
-    JMenuItem newItem;
-    JMenuItem loadItem;
+    JMenuItem newWorldItem;
+    JMenuItem generateWorldItem;
+    JMenuItem loadRedItem;
+    JMenuItem loadBlackItem;
+    JMenuItem resetItem;
     JMenuItem mainItem;
     JMenuItem rulesItem;
     JMenuItem creditsItem;
     boolean normalGame;
     boolean contestGame;
+    World world;
 
+    /**
+     *
+     */
     public AntGameGUI() {
     }
 
+    /**
+     *
+     */
     private void go() {
         welcomeFrame = new JFrame("The Ant Game");
 
@@ -78,8 +102,8 @@ public class AntGameGUI {
 
         JPanel welcomeTop = new JPanel();
         welcomeContentPane.add(welcomeTop, BorderLayout.NORTH);
-        JLabel welcomeLabel = new JLabel("WELCOME");
-        welcomeLabel.setFont(new Font("Calibri", Font.PLAIN, 32));
+        JLabel welcomeLabel = new JLabel("THE ANT GAME");
+        welcomeLabel.setFont(new Font("Calibri", Font.PLAIN, 28));
         welcomeLabel.setForeground(Color.RED);
         welcomeTop.add(welcomeLabel);
 
@@ -98,7 +122,13 @@ public class AntGameGUI {
                 normalGame = true;
                 contestGame = false;
                 welcomeFrame.dispose();
-                setup();
+                try {
+                    setup();
+                } catch (FileNotFoundException ex) {
+                    Logger.getLogger(AntGameGUI.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (IOException ex) {
+                    Logger.getLogger(AntGameGUI.class.getName()).log(Level.SEVERE, null, ex);
+                }
                 gameFrame.setVisible(true);
             }
         });
@@ -110,7 +140,13 @@ public class AntGameGUI {
                 contestGame = true;
                 normalGame = false;
                 welcomeFrame.dispose();
-                setup();
+                try {
+                    setup();
+                } catch (FileNotFoundException ex) {
+                    Logger.getLogger(AntGameGUI.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (IOException ex) {
+                    Logger.getLogger(AntGameGUI.class.getName()).log(Level.SEVERE, null, ex);
+                }
                 gameFrame.setVisible(true);
             }
         });
@@ -134,10 +170,13 @@ public class AntGameGUI {
         welcomeFrame.setLocationRelativeTo(null);
     }
 
-    private void setup() {
+    /**
+     *
+     */
+    private void setup() throws FileNotFoundException, IOException {
         //Set up the gameFrame
         gameFrame = new JFrame("Ant Game");
-        infoLabel = new JLabel("Load ant brain to get started");
+        infoLabel = new JLabel("<html><div style=\\\"text-align: center;\\\">\"<br> The Ant Game:<br> Three default worlds have been provided for you. Select the stage you want to play on.<br>If you wish to upload your custom world and brain from your computer<br>then select the custom world option.<br>    ");
         pauseButton = new JButton("Pause");
         playButton = new JButton("Play");
 
@@ -149,7 +188,201 @@ public class AntGameGUI {
 
         //Set up the center panel
         centerPanel = new JPanel();
-        contentPane.add(centerPanel, BorderLayout.CENTER);
+//        stagesPanel = new JPanel();
+//        stagesPanel.setLayout(new BoxLayout(stagesPanel, BoxLayout.Y_AXIS));
+
+//        centerPanel.add(stagesPanel);
+//        centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.PAGE_AXIS));
+
+        JScrollPane centerPanelPane = new JScrollPane(centerPanel);
+        contentPane.add(centerPanelPane, BorderLayout.CENTER);
+
+        stage1info = new JLabel("<html>A tiny 10x10 world<br> with very simplistic<br> ant brains</html>");
+        stage2info = new JLabel("<html>A normal 100x100 world<br> with more sophisticated<br> ant brains</html>");
+        stage3info = new JLabel("<html>A big 150x150 world<br> with advanced ant brains</html>");
+        stage1 = new JButton("Stage 1");
+        stage2 = new JButton("Stage 2");
+        stage3 = new JButton("Stage 3");
+
+        centerPanel.setLayout(new GridLayout(7, 2));
+        centerPanel.add(Box.createRigidArea(new Dimension(0, 5)));
+        centerPanel.add(Box.createRigidArea(new Dimension(0, 5)));
+        centerPanel.add(stage1info);
+        stage1info.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
+        centerPanel.add(stage1);
+        centerPanel.add(Box.createRigidArea(new Dimension(0, 5)));
+        centerPanel.add(Box.createRigidArea(new Dimension(0, 5)));
+        centerPanel.add(stage2info);
+        stage2info.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
+        centerPanel.add(stage2);
+        centerPanel.add(Box.createRigidArea(new Dimension(0, 5)));
+        centerPanel.add(Box.createRigidArea(new Dimension(0, 5)));
+        centerPanel.add(stage3info);
+        stage3info.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
+        centerPanel.add(stage3);
+        centerPanel.add(Box.createRigidArea(new Dimension(0, 1)));
+        centerPanel.add(Box.createRigidArea(new Dimension(0, 1)));
+        centerPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 10));
+
+        stage1.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                centerPanel.setLayout(new FlowLayout());
+                //Make the buttons disappear
+                stage1.setVisible(false);
+                stage2.setVisible(false);
+                stage3.setVisible(false);
+                stage1info.setVisible(false);
+                stage2info.setVisible(false);
+                stage3info.setVisible(false);
+
+                //Load World
+                MapParser mp = new MapParser();
+                try {
+                    world = mp.loadWorld("src/antgame/worlds/tiny");
+                    world.setWorldGrid(mp.getWorldGrid());
+                    centerPanel.add(world.getWorldGrid());
+                } catch (FileNotFoundException ex) {
+                } catch (IOException ex) {
+                }
+
+                //Load Red Brain
+                try {
+                    AntBrainParser abp = new AntBrainParser();
+                    world.setRedBrain(abp.parseBrain("src/antgame/brains/brain1.txt"));
+                } catch (InvalidSyntaxException ex) {
+                    System.err.println("Invalid Syntax");
+                } catch (FileNotFoundException ex) {
+                    System.err.println("File not found");
+                } catch (IOException ex) {
+                    System.err.println("IOException");
+                }
+
+                //Load Black Brain
+                try {
+                    AntBrainParser abp = new AntBrainParser();
+                    world.setBlackBrain(abp.parseBrain("src/antgame/brains/brain1.txt"));
+                } catch (InvalidSyntaxException ex) {
+                    System.err.println("Invalid Syntax");
+                } catch (FileNotFoundException ex) {
+                    System.err.println("File not found");
+                } catch (IOException ex) {
+                    System.err.println("IOException");
+                }
+
+                //Enable Play Button
+                playButton.setEnabled(true);
+            }
+        });
+        stage2.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                centerPanel.setLayout(new FlowLayout());
+                //Make the buttons disappear
+                stage1.setVisible(false);
+                stage2.setVisible(false);
+                stage3.setVisible(false);
+                stage1.setVisible(false);
+                stage2.setVisible(false);
+                stage3.setVisible(false);
+                stage1info.setVisible(false);
+                stage2info.setVisible(false);
+                stage3info.setVisible(false);
+
+                //Load World
+                MapParser mp = new MapParser();
+                try {
+                    world = mp.loadWorld("src/antgame/worlds/world1");
+                    world.setWorldGrid(mp.getWorldGrid());
+                    centerPanel.add(world.getWorldGrid());
+                } catch (FileNotFoundException ex) {
+                } catch (IOException ex) {
+                }
+
+                //Load Red Brain
+                try {
+                    AntBrainParser abp = new AntBrainParser();
+                    world.setRedBrain(abp.parseBrain("src/antgame/brains/brain1.txt"));
+                } catch (InvalidSyntaxException ex) {
+                    System.err.println("Invalid Syntax");
+                } catch (FileNotFoundException ex) {
+                    System.err.println("File not found");
+                } catch (IOException ex) {
+                    System.err.println("IOException");
+                }
+
+                //Load Black Brain
+                try {
+                    AntBrainParser abp = new AntBrainParser();
+                    world.setBlackBrain(abp.parseBrain("src/antgame/brains/brain1.txt"));
+                } catch (InvalidSyntaxException ex) {
+                    System.err.println("Invalid Syntax");
+                } catch (FileNotFoundException ex) {
+                    System.err.println("File not found");
+                } catch (IOException ex) {
+                    System.err.println("IOException");
+                }
+                //Enable Play Button
+                playButton.setEnabled(true);
+            }
+        });
+
+        stage3.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                centerPanel.setLayout(new FlowLayout());
+                //Make the buttons disappear
+                stage1.setVisible(false);
+                stage2.setVisible(false);
+                stage3.setVisible(false);
+                stage1.setVisible(false);
+                stage2.setVisible(false);
+                stage3.setVisible(false);
+                stage1info.setVisible(false);
+                stage2info.setVisible(false);
+                stage3info.setVisible(false);
+
+                //Load World
+                MapParser mp = new MapParser();
+                try {
+                    world = mp.loadWorld("src/antgame/worlds/world2");
+                    world.setWorldGrid(mp.getWorldGrid());
+                    centerPanel.add(world.getWorldGrid());
+                } catch (FileNotFoundException ex) {
+                } catch (IOException ex) {
+                }
+
+                //Load Red Brain
+                try {
+                    AntBrainParser abp = new AntBrainParser();
+                    world.setRedBrain(abp.parseBrain("src/antgame/brains/brain5.txt"));
+                } catch (InvalidSyntaxException ex) {
+                    System.err.println("Invalid Syntax");
+                } catch (FileNotFoundException ex) {
+                    System.err.println("File not found");
+                } catch (IOException ex) {
+                    System.err.println("IOException");
+                }
+
+                //Load Black Brain
+                try {
+                    AntBrainParser abp = new AntBrainParser();
+                    world.setBlackBrain(abp.parseBrain("src/antgame/brains/brain5.txt"));
+                } catch (InvalidSyntaxException ex) {
+                    System.err.println("Invalid Syntax");
+                } catch (FileNotFoundException ex) {
+                    System.err.println("File not found");
+                } catch (IOException ex) {
+                    System.err.println("IOException");
+                }
+
+                //Enable Play Button
+                playButton.setEnabled(true);
+            }
+        });
+
+
+
 
         //Set up the right panel
         rightPanel = new JPanel();
@@ -185,12 +418,15 @@ public class AntGameGUI {
         createSlider();
 
         gameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        gameFrame.setResizable(false);
+//        gameFrame.setResizable(false);
         gameFrame.setVisible(false);
         gameFrame.pack();
         gameFrame.setLocationRelativeTo(null);
     }
 
+    /**
+     *
+     */
     private void makeMenuBar() {
         menuBar = new JMenuBar();
         gameFrame.setJMenuBar(menuBar);
@@ -199,42 +435,132 @@ public class AntGameGUI {
         JMenu optionsMenu = new JMenu("Options");
         menuBar.add(optionsMenu);
 
-        newItem = new JMenuItem("New World");
-        optionsMenu.add(newItem);
-        newItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                gameFrame.invalidate();
-                gameFrame.validate();
-                gameFrame.repaint();
-                System.out.println("Hit");
-            }
-        });
-        loadItem = new JMenuItem("Load Brain");
-        optionsMenu.add(loadItem);
-        loadItem.addActionListener(new ActionListener() {
+        newWorldItem = new JMenuItem("Load World");
+        optionsMenu.add(newWorldItem);
+        newWorldItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 final JFileChooser fc = new JFileChooser();
                 int val = fc.showOpenDialog(gameFrame);
                 if (val == JFileChooser.APPROVE_OPTION) {
+                    File file = fc.getSelectedFile();
+                    MapParser mp = new MapParser();
                     try {
-                        Scanner reader = new Scanner(fc.getSelectedFile());
-                        playButton.setEnabled(true);
-                        if(contestGame){
-                            infoLabel.setText("Contest");
-                        }
-                        else{
-                            infoLabel.setText("Normal Game");
-                        }
+                        world = mp.loadWorld(file.getAbsolutePath());
+                        world.setWorldGrid(mp.getWorldGrid());
+                        centerPanel.setLayout(new FlowLayout());
+                        centerPanel.add(world.getWorldGrid());
+                        gameFrame.repaint();
                     } catch (FileNotFoundException ex) {
-                        System.out.println("No file selected");
+                        System.err.println("File not found");
+                    } catch (IOException ex) {
+                        System.err.println("IO Exception");
+                    }
+
+                }
+                if (val == JFileChooser.CANCEL_OPTION) {
+                    System.out.println("You pressed cancel");
+                }
+
+            }
+        });
+        generateWorldItem = new JMenuItem("Generate World");
+        optionsMenu.add(generateWorldItem);
+        generateWorldItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                generateWorld();
+                System.out.println("Hit");
+            }
+        });
+        loadRedItem = new JMenuItem("Load Red Brain");
+        optionsMenu.add(loadRedItem);
+        loadRedItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                final JFileChooser fc = new JFileChooser();
+                int val = fc.showOpenDialog(gameFrame);
+                if (val == JFileChooser.APPROVE_OPTION) {
+                    File file = fc.getSelectedFile();
+                    try {
+                        AntBrainParser abp = new AntBrainParser();
+                        world.setRedBrain(abp.parseBrain(file.getAbsolutePath()));
+                    } catch (InvalidSyntaxException ex) {
+                        System.err.println("Invalid Syntax");
+                    } catch (FileNotFoundException ex) {
+                        System.err.println("File not found");
+                    } catch (IOException ex) {
+                        System.err.println("IOException");
                     }
                 }
                 if (val == JFileChooser.CANCEL_OPTION) {
                     System.out.println("You pressed cancel");
                 }
 
+            }
+        });
+        loadBlackItem = new JMenuItem("Load Black Brain");
+        optionsMenu.add(loadBlackItem);
+        loadBlackItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                final JFileChooser fc = new JFileChooser();
+                int val = fc.showOpenDialog(gameFrame);
+                if (val == JFileChooser.APPROVE_OPTION) {
+                    File file = fc.getSelectedFile();
+                    try {
+                        AntBrainParser abp = new AntBrainParser();
+                        world.setBlackBrain(abp.parseBrain(file.getAbsolutePath()));
+                    } catch (InvalidSyntaxException ex) {
+                        System.err.println("Invalid Syntax");
+                    } catch (FileNotFoundException ex) {
+                        System.err.println("File not found");
+                    } catch (IOException ex) {
+                        System.err.println("IOException");
+                    }
+                }
+                if (val == JFileChooser.CANCEL_OPTION) {
+                    System.out.println("You pressed cancel");
+                }
+                playButton.setEnabled(true);
+
+            }
+        });
+
+        resetItem = new JMenuItem("Reset");
+        optionsMenu.add(resetItem);
+        resetItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                centerPanel.removeAll();
+                centerPanel.setLayout(new GridLayout(7, 2));
+                centerPanel.add(Box.createRigidArea(new Dimension(0, 5)));
+                centerPanel.add(Box.createRigidArea(new Dimension(0, 5)));
+                centerPanel.add(stage1info);
+                stage1info.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
+                stage1info.setVisible(true);
+                centerPanel.add(stage1);
+                stage1.setVisible(true);
+                centerPanel.add(Box.createRigidArea(new Dimension(0, 5)));
+                centerPanel.add(Box.createRigidArea(new Dimension(0, 5)));
+                centerPanel.add(stage2info);
+                stage2info.setVisible(true);
+                stage2info.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
+                centerPanel.add(stage2);
+                stage2.setVisible(true);
+                centerPanel.add(Box.createRigidArea(new Dimension(0, 5)));
+                centerPanel.add(Box.createRigidArea(new Dimension(0, 5)));
+                centerPanel.add(stage3info);
+                stage3info.setVisible(true);
+                stage3info.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
+                centerPanel.add(stage3);
+                stage3.setVisible(true);
+                centerPanel.add(Box.createRigidArea(new Dimension(0, 1)));
+                centerPanel.add(Box.createRigidArea(new Dimension(0, 1)));
+                centerPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 10));
+
+                centerPanel.revalidate();
+                centerPanel.repaint();
             }
         });
 
@@ -274,6 +600,9 @@ public class AntGameGUI {
 
     }
 
+    /**
+     *
+     */
     private void contestRightPanel() {
         JLabel gameNo = new JLabel("<html>Game Number:<br>Number</html>");
         JLabel gamesWon = new JLabel("Games Won:");
@@ -290,22 +619,33 @@ public class AntGameGUI {
 
     }
 
+    /**
+     *
+     */
     private void contestLeftPanel() {
         JLabel blackScore = new JLabel("<html>Black<br>Score</html>");
         JLabel redScore = new JLabel("<html>Red<br>Score</html>");
         leftPanel.add(blackScore);
         leftPanel.add(Box.createRigidArea(new Dimension(0, 30)));
         leftPanel.add(redScore);
+
     }
 
+    /**
+     *
+     */
     private void normalLeftPanel() {
         JLabel blackScore = new JLabel("<html>Black<br>Score</html>");
         JLabel redScore = new JLabel("<html>Red<br>Score</html>");
         leftPanel.add(blackScore);
         leftPanel.add(Box.createRigidArea(new Dimension(0, 30)));
         leftPanel.add(redScore);
+        leftPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 20));
     }
 
+    /**
+     *
+     */
     private void createSlider() {
         final JLabel gamePaceLabel = new JLabel("Game Speed: 10", JLabel.LEFT);
         gamePaceLabel.setSize(200, 50);
@@ -322,8 +662,8 @@ public class AntGameGUI {
 
         //Create buttons
         actionButtons.setLayout(new FlowLayout());
-        
-        
+
+
         //Initialize play button
         try {
             Image img = ImageIO.read(getClass().getResource("resources/play.png"));
@@ -337,6 +677,24 @@ public class AntGameGUI {
             public void actionPerformed(ActionEvent e) {
                 playButton.setEnabled(false);
                 pauseButton.setEnabled(true);
+                for (int i = 0; i < 1500; i++) {
+                infoLabel.setText("Executing Instruction " + i);
+//                    System.out.println("Round " + i);
+                    for (Ant a : world.getAnts()) {
+                        world.step(a.getId());
+//                        System.out.println("Ant " + a.getId());
+                        System.out.println("Ant is at cell [" + a.getCell().getX() + ", " + a.getCell().getY() + "]");
+
+                    }
+//                    centerPanel.repaint();
+//                    centerPanel.invalidate();
+//                    centerPanel.validate();
+//                    for (int j = 0; j < world.getAnts().size(); j++) {
+//                        world.step(world.getAnts().get(j).getId());
+//                        System.out.println("Execute Instruction " + j);
+//                    }
+
+                }
             }
         });
         actionButtons.add(playButton);
@@ -359,5 +717,68 @@ public class AntGameGUI {
         actionButtons.add(pauseButton);
 
         bottomPanel.add(actionButtons, BorderLayout.EAST);
+    }
+
+    public void generateWorld() {
+        final JFrame genWorldFrame = new JFrame("Generate World");
+        Container genWorldCP = genWorldFrame.getContentPane();
+        genWorldCP.setLayout(new BorderLayout());
+
+        JPanel genWorldOptions = new JPanel();
+        genWorldOptions.setLayout(new GridLayout(6, 2));
+        JLabel width = new JLabel("Map Width");
+        final JTextField widthf = new JTextField();
+        JLabel height = new JLabel("Map Height");
+        final JTextField heightf = new JTextField();
+        JLabel rocky = new JLabel("Number of Rocks");
+        final JTextField rockyf = new JTextField();
+        JLabel blackAnthills = new JLabel("Number of Black Anthills");
+        final JTextField blackAnthillsf = new JTextField();
+        JLabel redAnthills = new JLabel("Number of Red Anthills");
+        final JTextField redAnthillsf = new JTextField();
+        JLabel food = new JLabel("Number of Food");
+        final JTextField foodf = new JTextField();
+
+        genWorldOptions.add(width);
+        genWorldOptions.add(widthf);
+        genWorldOptions.add(height);
+        genWorldOptions.add(heightf);
+        genWorldOptions.add(rocky);
+        genWorldOptions.add(rockyf);
+        genWorldOptions.add(blackAnthills);
+        blackAnthills.setBorder(new EmptyBorder(10, 0, 10, 10));
+        genWorldOptions.add(blackAnthillsf);
+        genWorldOptions.add(redAnthills);
+        genWorldOptions.add(redAnthillsf);
+        genWorldOptions.add(food);
+        genWorldOptions.add(foodf);
+        genWorldCP.add(genWorldOptions, BorderLayout.CENTER);
+        genWorldOptions.setBorder(new EmptyBorder(10, 10, 10, 10));
+
+        JPanel genWorldBottom = new JPanel();
+        JButton generateWorld = new JButton("Generate World");
+        generateWorld.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                WorldGenerator wg = new WorldGenerator(Integer.parseInt(widthf.getText()), Integer.parseInt(heightf.getText()));
+                wg.setRocky(Integer.parseInt(rockyf.getText()));
+                wg.setBlackAntHill(Integer.parseInt(blackAnthillsf.getText()));
+                wg.setRedAntHill(Integer.parseInt(redAnthillsf.getText()));
+                wg.setNumFood(Integer.parseInt(foodf.getText()));
+                centerPanel.add(wg.makeGraphics(wg.getStringArray()));
+                gameFrame.invalidate();
+                gameFrame.validate();
+                gameFrame.repaint();
+                gameFrame.pack();
+                genWorldFrame.dispose();
+            }
+        });
+        genWorldBottom.add(generateWorld);
+        genWorldCP.add(genWorldBottom, BorderLayout.SOUTH);
+
+        genWorldFrame.setResizable(false);
+        genWorldFrame.setVisible(true);
+        genWorldFrame.setLocationRelativeTo(null);
+        genWorldFrame.pack();
     }
 }
