@@ -1,0 +1,48 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package antgame;
+
+/**
+ *
+ * @author bps23
+ */
+public class Game {
+    
+    private AntBrain redPlayer;
+    private AntBrain blackPlayer;
+    private World world;
+    enum winner {
+        REDPLAYER,
+        BLACKPLAYER,
+        DRAW;
+    };
+    winner gameWinner; 
+
+    public winner getWinner() {
+        return gameWinner;
+    }
+
+    public void setWinner(winner gameWinner) {
+        this.gameWinner = gameWinner;
+    }
+    public Game(AntBrain redPlayer, AntBrain blackPlayer, World world) {
+        this.redPlayer = redPlayer;
+        this.blackPlayer = blackPlayer;
+        this.world = world;
+    }
+
+    public AntBrain getRedPlayer() {
+        return redPlayer;
+    }
+
+    public AntBrain getBlackPlayer() {
+        return blackPlayer;
+    }
+
+    public World getWorld() {
+        return world;
+    }
+    
+}
