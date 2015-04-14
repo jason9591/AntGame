@@ -1,0 +1,311 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package antgame;
+
+import antgame.Color;
+import java.util.ArrayList;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import static org.junit.Assert.*;
+
+/**
+ *
+ * @author hn66
+ */
+public class CellTest {
+    
+    public CellTest() {
+    }
+    
+    @BeforeClass
+    public static void setUpClass() {
+    }
+    
+    @AfterClass
+    public static void tearDownClass() {
+    }
+    
+    @Before
+    public void setUp() {
+    }
+    
+    @After
+    public void tearDown() {
+    }
+
+    /**
+     * Test of getX method, of class Cell.
+     * Check if x-axis of the cell can be stored and retrieved correctly
+     */
+    @Test
+    public void testGetX() {
+        System.out.println("getX");
+        Cell instance = new Cell(5, 9);
+        int expResult = 5;
+        int result = instance.getX();
+        assertEquals(expResult, result);
+        
+    }
+
+    /**
+     * Test of getY method, of class Cell.
+     * Check if y-axis of the cell can be stored and retrieved correctly
+     */
+    @Test
+    public void testGetY() {
+        System.out.println("getY");
+        Cell instance = new Cell(1, 8);
+        int expResult = 8;
+        int result = instance.getY();
+        assertEquals(expResult, result);
+    }
+
+    /**
+     * Test of hasAnt method, of class Cell.
+     * check if antAtCell is correctly updated
+     */
+    @Test
+    public void testHasAnt() {
+        System.out.println("hasAnt");
+        Cell instance = new Cell(0, 7);
+        Cell[][] cell_list = new Cell[100][100];
+        ArrayList<Ant> ant = new ArrayList<>();
+        World world = new World(cell_list, ant);
+        antgame.Color c = antgame.Color.RED;
+        Ant a = new Ant(world, instance, c);
+        instance.setAnt(a);
+        boolean expResult = true;
+        boolean result = instance.hasAnt();
+        assertEquals(expResult, result);
+    }
+
+    /**
+     * Test of setAnt method, of class Cell.
+     * check if an ant can be stored into a particular cell
+     */
+    @Test
+    public void testSetAnt() {
+        System.out.println("setAnt");
+        Cell instance = new Cell(0, 5);
+        Cell[][] cell_list = new Cell[100][100];
+        ArrayList<Ant> ant = new ArrayList<>();
+        World world = new World(cell_list, ant);
+        antgame.Color c = antgame.Color.RED;
+        Ant a = new Ant(world, instance, c);
+        instance.setAnt(a);
+        assertEquals(a, instance.getAnt());
+    }
+
+    /**
+     * Test of getAnt method, of class Cell.
+     * check if particular ant can be access by this method
+     */
+    @Test
+    public void testGetAnt() {
+        System.out.println("getAnt");
+        Cell instance = new Cell(6, 9);
+        Cell[][] cell_list = new Cell[100][100];
+        ArrayList<Ant> ant = new ArrayList<>();
+        World world = new World(cell_list, ant);
+        antgame.Color c = antgame.Color.RED;
+        Ant a = new Ant(world, instance, c);
+        instance.setAnt(a);
+        Ant expResult = a;
+        Ant result = instance.getAnt();
+        assertEquals(expResult, result);
+    }
+
+    /**
+     * Test of getAmountOfFood method, of class Cell.
+     * Check if this number equals to the number of food assigned to this cell
+     */
+    @Test
+    public void testGetAmountOfFood() {
+        System.out.println("getAmountOfFood");
+        Cell instance = new Cell(9, 7);
+        instance.set_food(9);
+        int expResult = 9;
+        int result = instance.getAmountOfFood();
+        assertEquals(expResult, result);
+    }
+
+    /**
+     * Test of set_food method, of class Cell.
+     * check set_food is functioning correctly
+     * it pass if update amountOfFood correctly
+     */
+    @Test
+    public void testSet_food() {
+        System.out.println("set_food");
+        int food = 7;
+        Cell instance = new Cell(9, 0);
+        instance.set_food(food);
+        assertEquals(7, instance.getAmountOfFood());
+    }
+
+    /**
+     * Test of set_anthill method, of class Cell.
+     * it pass if update antHill, hillAtCell and antAtCell correctly
+     */
+    @Test
+    public void testSet_anthill() {
+        System.out.println("set_anthill");
+        Cell[][] cell_list = new Cell[100][100];
+        ArrayList<Ant> ant = new ArrayList<>();
+        World world = new World(cell_list, ant);
+        antgame.Color c = antgame.Color.RED;
+        Cell instance = new Cell(6, 8);
+        AntHill ah = new AntHill(world, instance, c);
+        instance.set_anthill(ah);
+        assertEquals(ah, instance.getAntHill());
+    }
+
+    /**
+     * Test of has_anthill method, of class Cell.
+     * Check if has_anthill function correctly
+     */
+    @Test
+    public void testHas_anthill() {
+        System.out.println("has_anthill");
+        Cell instance = new Cell(9, 8);
+        Cell[][] cell_list = new Cell[100][100];
+        ArrayList<Ant> ant = new ArrayList<>();
+        World world = new World(cell_list, ant);
+        antgame.Color c = antgame.Color.RED;
+        AntHill ah = new AntHill(world, instance, c);
+        instance.set_anthill(ah);
+        boolean expResult = true;
+        boolean result = instance.has_anthill();
+        assertEquals(expResult, result);
+    }
+
+    /**
+     * Test of getAntHill method, of class Cell.
+     * check if particular anthill can be aceessed using this function
+     */
+    @Test
+    public void testGetAntHill() {
+        System.out.println("getAntHill");
+        Cell instance = new Cell(7, 0);
+        Cell[][] cell_list = new Cell[100][100];
+        ArrayList<Ant> ant = new ArrayList<>();
+        World world = new World(cell_list, ant);
+        antgame.Color c = antgame.Color.RED;
+        AntHill ah = new AntHill(world, instance, c);
+        instance.set_anthill(ah);
+        AntHill expResult = ah;
+        AntHill result = instance.getAntHill();
+        assertEquals(expResult, result);
+    }
+
+    /**
+     * Test of setRocky method, of class Cell.
+     * test if isRocky is correctly updated
+     */
+    @Test
+    public void testSetRocky() {
+        System.out.println("setRocky");
+        Cell instance = new Cell(0, 9);
+        instance.setRocky();
+        assertTrue(instance.isRocky());
+    }
+
+    /**
+     * Test of isRocky method, of class Cell.
+     * test if the value of isRocky can be retrieved correctly
+     */
+    @Test
+    public void testIsRocky() {
+        System.out.println("isRocky");
+        Cell instance = new Cell(9, 7);
+        instance.setRocky();
+        boolean expResult = true;
+        boolean result = instance.isRocky();
+        assertEquals(expResult, result);
+    }
+
+    /**
+     * Test of clearAnt method, of class Cell.
+     * test if the ant in the cell can be removed 
+     */
+    @Test
+    public void testClearAnt() {
+        System.out.println("clearAnt");
+        Cell instance = new Cell(0, 5);
+        Cell[][] cell_list = new Cell[100][100];
+        ArrayList<Ant> ant = new ArrayList<>();
+        World world = new World(cell_list, ant);
+        antgame.Color c = antgame.Color.RED;
+        Ant a = new Ant(world, instance, c);
+        instance.setAnt(a);
+        instance.clearAnt();
+        assertEquals(null, instance.getAnt());
+    }
+
+    /**
+     * Test of set_marker_at method, of class Cell.
+     * test if all maker can be set to cell correctly
+     */
+    @Test
+    public void testSet_marker_at() {
+        System.out.println("set_marker_at");
+        Color c = Color.valueOf("RED");
+        int i = 3;
+        Cell instance = new Cell(9, 9);
+        instance.set_marker_at(c, i);
+        assertEquals(true, instance.check_marker_at(c, i));
+    }
+
+    /**
+     * Test of clear_marker_at method, of class Cell.
+     * check if assigned marker can be removed from particular cell
+     */
+    @Test
+    public void testClear_marker_at() {
+        System.out.println("clear_marker_at");
+        Color c = Color.valueOf("RED");
+        int i = 2;
+        Cell instance = new Cell(6, 0);
+        instance.set_marker_at(c, i);
+        instance.clear_marker_at(c, i);
+        assertEquals(false, instance.check_marker_at(c, i));
+    }
+
+    /**
+     * Test of check_marker_at method, of class Cell.
+     * check if correct marker at the cell can be accessed
+     */
+    @Test
+    public void testCheck_marker_at() {
+        System.out.println("check_marker_at");
+        Color c = Color.valueOf("RED");
+        int i = 5;
+        Cell instance = new Cell(3, 0);
+        instance.set_marker_at(c, i);
+        boolean expResult = true;
+        boolean result = instance.check_marker_at(c, i);
+        assertEquals(expResult, result);
+    }
+
+    /**
+     * Test of check_any_marker_at method, of class Cell.
+     * test if the method function properly 
+     * check if marker with other color can be found too
+     */
+    @Test
+    public void testCheck_any_marker_at() {
+        System.out.println("check_any_marker_at");
+        Color c = Color.valueOf("RED");
+        int i = 3;
+        Cell instance = new Cell(3, 0);
+        instance.set_marker_at(c, i);
+        boolean expResult = true;
+        boolean result = instance.check_any_marker_at(c);
+        assertEquals(expResult, result);
+    }
+}
