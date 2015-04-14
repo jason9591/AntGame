@@ -20,19 +20,13 @@ public class AntBrainParser {
     ArrayList<Instruction> fsm;
     String pattern = "(Turn (Right|Left) \\d{1,4})|(Flip [1-9][0-9]* \\d{1,4} \\d{1,4})|(Sense (Here|Ahead|LeftAhead|RightAhead) \\d{1,4} \\d{1,4} (Friend(WithFood)?|Foe(WithFood|Marker|Home)?|Food|Rock|Marker [0-5]|Home))|(Mark [0-5] \\d{1,4})|(Unmark [0-5] \\d{1,4})|(PickUp \\d{1,4} \\d{1,4})|(Drop \\d{1,4})|(Move \\d{1,4} \\d{1,4})";
 
-    public AntBrainParser() throws FileNotFoundException, IOException, InvalidSyntaxException {
+    public AntBrainParser() throws FileNotFoundException, InvalidSyntaxException {
         fsm = new ArrayList<>();
-    }
-
-    public static void main(String[] args) throws IOException, FileNotFoundException, InvalidSyntaxException {
-        AntBrainParser abp = new AntBrainParser();
-        abp.parseBrain("src/antgame/brains/brain1.txt");
-        abp.printInstructions();
     }
 
     /**
      *
-     * @param pathName
+     * @param pathName the path of the brain to be parsed
      */
     public ArrayList<Instruction> parseBrain(String pathName) throws FileNotFoundException, IOException, InvalidSyntaxException {
         BufferedReader br = new BufferedReader(new FileReader(pathName));
@@ -46,7 +40,7 @@ public class AntBrainParser {
 
     /**
      *
-     * @param line
+     * @param line the line to be pqrsed
      * @throws java.io.IOException
      * @throws antgame.errors.InvalidSyntaxException
      */
