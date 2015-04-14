@@ -6,9 +6,6 @@ package antgame;
  */
 public class Instruction {
 
-    /**
-     *
-     */
     public Instruction() {
     }
 }
@@ -27,6 +24,18 @@ class Sense extends Instruction {
     Cond cond;
     int st;
 
+    /**
+     * Sense instruction. Sense takes a relative direction and a condition (see
+     * Cond classes) and checks if the condition holds in the cell adjacent to
+     * the one where the instruction is executed in the given direction. If the
+     * condition holds, it makes the ant go to state1 else to state2.
+     *
+     * @param sensedir the direction of the cell to be sensed
+     * @param st the state to go to if the condition holds in the sensed cell
+     * @param st2 the state to go if the condition does not hold in the sensed
+     * cell
+     * @param cond the condition to check
+     */
     public Sense(Sense.Dir sensedir, int st, int st2, Cond cond) {
         this.st = st;
         this.sensedir = sensedir;
@@ -35,22 +44,42 @@ class Sense extends Instruction {
 
     }
 
+    /**
+     *
+     * @return the direction argument of the instruction
+     */
     public Sense.Dir getSensedir() {
         return sensedir;
     }
 
+    /**
+     *
+     * @return the state2 argument of the instruction
+     */
     public int getSt2() {
         return st2;
     }
 
+    /**
+     *
+     * @return the condition argument of the instruction
+     */
     public Cond getCond() {
         return cond;
     }
 
+    /**
+     *
+     * @return the state argument of the instruction
+     */
     public int getSt() {
         return st;
     }
 
+    /**
+     *
+     * @return a string of the type of the instruction
+     */
     @Override
     public String toString() {
         return "Sense";
@@ -65,100 +94,161 @@ class Mark extends Instruction {
     int i;
     int st;
 
+    /**
+     * Mark instruction. Mark makes the ant mark the cell it is currently on
+     * with a marker of type i and then go to the given state
+     *
+     * @param i the marker type to be marked
+     * @param st the state to go to after the marking
+     */
     public Mark(int i, int st) {
         this.st = st;
         this.i = i;
     }
 
+    /**
+     *
+     * @return the i argument of the instruction
+     */
     public int getI() {
         return i;
     }
 
+    /**
+     *
+     * @return the state argument of the instruction
+     */
     public int getSt() {
         return st;
     }
 
+    /**
+     *
+     * @return a string of the type of the class
+     */
     @Override
     public String toString() {
         return "Mark";
     }
 }
 
-/**
- *
- */
 class Unmark extends Instruction {
 
     int i;
     int st;
 
+    /**
+     * Unmark instruction. Unmark makes the ant unmark the marker of type i
+     * off the cell it is currently on and then go to the given state.
+     *
+     * @param i the marker type to be removed
+     * @param st the state to go to after unmarking
+     */
     public Unmark(int i, int st) {
         this.st = st;
         this.i = i;
     }
 
+    /**
+     *
+     * @return the i argument of the instruction
+     */
     public int getI() {
         return i;
     }
 
+    /**
+     *
+     * @return the state argument of the instruction
+     */
     public int getSt() {
         return st;
     }
 
+    /**
+     *
+     * @return a string of the type of the class
+     */
     @Override
     public String toString() {
         return "Unmark";
     }
 }
 
-/**
- *
- */
 class PickUp extends Instruction {
 
     int st1;
     int st2;
 
+    /**
+     * PickUp instruction. Makes the ant pick up a unit of food
+     * and then go to the given state.
+     *
+     * @param st1 the state to go to if food is successfully picked up
+     * @param st2 the state to go to if no food is being picked up
+     */
     public PickUp(int st1, int st2) {
         this.st1 = st1;
         this.st2 = st2;
     }
 
+    /**
+     *
+     * @return the state1 argument of the instruction
+     */
     public int getSt1() {
         return st1;
     }
 
+    /**
+     *
+     * @return the state 2 argument of the instruction
+     */
     public int getSt2() {
         return st2;
     }
 
+    /**
+     *
+     * @return a string of the type of the class
+     */
     @Override
     public String toString() {
         return "Pickup";
     }
 }
 
-/**
- *
- */
 class Drop extends Instruction {
 
     int st;
 
+    /**
+     * Drop instruction. Makes the ant drop the food it carries
+     * and then go to the given state.
+     *
+     * @param st the state to go after the food is dropped
+     */
     public Drop(int st) {
         this.st = st;
     }
 
+    /**
+     *
+     * @return the state argument of the instruction
+     */
     public int getSt() {
         return st;
     }
 
+    /**
+     *
+     * @return a string of the type of the class
+     */
     @Override
     public String toString() {
         return "Drop";
     }
 }
-
 
 /**
  *
@@ -174,8 +264,11 @@ class Turn extends Instruction {
     Left_Right left_or_right;
 
     /**
+     * Turn instruction. Makes the ant turn one step in the given
+     * direction (left or right) and then go to the given state.
      *
-     * @param @param
+     * @param lr the direction you want to turn to
+     * @param st the state to go after turning
      */
     public Turn(Left_Right lr, int st) {
         this.st = st;
@@ -188,81 +281,131 @@ class Turn extends Instruction {
 
     /**
      *
-     * @return
+     * @return the "left or right" argument of the instruction
      */
     public Left_Right getLr() {
         return left_or_right;
     }
 
+    /**
+     *
+     * @return the state argument of the instruction
+     */
     public int getSt() {
         return st;
     }
 
+    /**
+     *
+     * @param left_or_right the "left or right" argument to be set
+     */
     public void setLeft_or_right(Left_Right left_or_right) {
         this.left_or_right = left_or_right;
     }
-    
 
+    /**
+     *
+     * @return a string of the type of the class
+     */
     @Override
     public String toString() {
         return "Turn";
     }
 }
 
-/**
- *
- */
 class Move extends Instruction {
 
     int st;
     int st2;
 
+    /**
+     * Move instruction. Move makes the ant go one step forward in the direction
+     * it currently has. If the ant can move to this cell then it goes to state,
+     * else it goes to state2.
+     *
+     * @param st the state to go to if the move is successful
+     * @param st2 the state to go to if the move fails
+     */
     public Move(int st, int st2) {
         this.st = st;
         this.st2 = st2;
     }
 
+    /**
+     *
+     * @return the state argument of the instruction
+     */
     public int getSt() {
         return st;
     }
 
+    /**
+     *
+     * @return the state2 argument of the instruction
+     */
     public int getSt2() {
         return st2;
     }
 
+    /**
+     *
+     * @return a string of the type of the class
+     */
     @Override
     public String toString() {
         return "Move";
     }
 }
 
-/**
- *
- */
 class Flip extends Instruction {
 
     int p;
     int st;
     int st2;
 
+    /**
+     * Flip Instruction. Flip takes a positive random integer between 0 and p-1
+     * and makes the ant go to state1 if the number is 0, and makes it go to
+     * state2 otherwise.
+     *
+     * @param p a positive integer
+     * @param st the state to go to if the random number between 0 and p-1 is 0
+     * @param st2 the state to go to if the random number is not 0
+     */
     public Flip(int p, int st, int st2) {
         this.st = st;
         this.st2 = st2;
         this.p = p;
     }
 
+    /**
+     *
+     * @return the p argument of the instruction
+     */
     public int getP() {
         return p;
     }
 
+    /**
+     *
+     * @return the state argument of the instruction
+     */
     public int getSt() {
         return st;
     }
 
+    /**
+     *
+     * @return the state2 argument of the instruction
+     */
     public int getSt2() {
         return st2;
     }
 
+    /**
+     *
+     * @return a string of the type of the class
+     */
     @Override
     public String toString() {
         return "Flip";
