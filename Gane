@@ -4,45 +4,110 @@
  */
 package antgame;
 
+import java.util.ArrayList;
+
 /**
  *
  * @author bps23
  */
 public class Game {
-    
+
     private AntBrain redPlayer;
     private AntBrain blackPlayer;
     private World world;
+
     enum winner {
+
         REDPLAYER,
         BLACKPLAYER,
         DRAW;
     };
-    winner gameWinner; 
+    winner gameWinner;
 
-    public winner getWinner() {
-        return gameWinner;
-    }
-
-    public void setWinner(winner gameWinner) {
-        this.gameWinner = gameWinner;
-    }
+    /**
+     *
+     * @param redPlayer the ant brain (the player) that will assume the red
+     * color
+     * @param blackPlayer the ant brain (the player) that will assume the black
+     * color
+     * @param world the world in which the game is going to take place
+     */
     public Game(AntBrain redPlayer, AntBrain blackPlayer, World world) {
         this.redPlayer = redPlayer;
         this.blackPlayer = blackPlayer;
         this.world = world;
     }
 
+    /**
+     *
+     * @return
+     */
+    public boolean isIsFinished() {
+        return isFinished;
+    }
+
+    /**
+     *
+     * @param isFinished
+     */
+    public void setIsFinished(boolean isFinished) {
+        this.isFinished = isFinished;
+    }
+    boolean isFinished;
+
+    /**
+     *
+     * @return the winner of the game
+     */
+    public winner getWinner() {
+        return gameWinner;
+    }
+
+    /**
+     *
+     * @param gameWinner the winner to be set
+     */
+    public void setWinner(winner gameWinner) {
+        this.gameWinner = gameWinner;
+    }
+
+    /**
+     *
+     * @param w the world in which the game took place
+     * @param c the color for which we want to get the score
+     * @return
+     */
+    public int getScore(World w, Color c) {
+        switch (c) {
+            case RED:
+                return w.getRedScore();
+            case BLACK:
+                return w.getBlackScore();
+        }
+        return 0;
+    }
+
+    /**
+     *
+     * @return the red player's brain
+     */
     public AntBrain getRedPlayer() {
         return redPlayer;
     }
 
+    /**
+     *
+     * @return the black player's brain
+     */
     public AntBrain getBlackPlayer() {
         return blackPlayer;
     }
 
+    /**
+     *
+     * @return the world in which the game takes place
+     */
     public World getWorld() {
         return world;
     }
-    
 }

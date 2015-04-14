@@ -13,9 +13,9 @@ public class AntHill {
 
     /**
      *
-     * @param w
-     * @param cell
-     * @param c
+     * @param w the world in which the anthill is being initialized
+     * @param cell the cell in which the anthill is
+     * @param c the color of the anthill
      */
     public AntHill(World w, Cell cell, Color c) {
         this.w = w;
@@ -23,15 +23,17 @@ public class AntHill {
         color = c;
         if (color == c.RED) {
             a = new Ant(w, cell, color.RED);
+            cell.setAnt(a);
         } else {
             a = new Ant(w, cell, color.BLACK);
+            cell.setAnt(a);
         }
         cell.set_anthill(this);
     }
 
     /**
      *
-     * @return
+     * @return the color of the anthill
      */
     public Color getColor() {
         return color;
@@ -39,16 +41,24 @@ public class AntHill {
 
     /**
      *
-     * @return
+     * @return the cell where the anthill is
      */
     public Cell getCell() {
         return cell;
     }
 
+    /**
+     *
+     * @param color the color to be set
+     */
     public void setColor(Color color) {
         this.color = color;
     }
 
+    /**
+     *
+     * @return the ant of the hill
+     */
     public Ant getA() {
         return a;
     }

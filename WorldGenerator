@@ -1,6 +1,12 @@
 package antgame;
 
+import antgame.errors.InvalidSyntaxException;
+import java.awt.GridLayout;
+import java.util.ArrayList;
 import java.util.Random;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 /**
  *
@@ -12,35 +18,35 @@ public class WorldGenerator {
     private final int height;
     private final Cell[][] worldCells;
     private World world;
+    private ArrayList<Ant> ants;
+    JLabel[][] labelArray; //A two dimensional array to store the map
+    JPanel worldGrid;
 
     /**
-     *
-     * @param args
-     */
-    public static void main(String[] args){
-        WorldGenerator wg = new WorldGenerator(150, 150);
-        wg.setRocky(200);
-        wg.setRedAntHill(5);
-        wg.displayWorld();
-
-    }
-    /**
-     * Generate a random worldCells. The worldCells perimeter is automatically set to rocky cells
+     * Generate a random worldCells. The worldCells perimeter is automatically
+     * set to rocky cells
      *
      * @param width Width of the worldCells to be created
      * @param height Height of the worldCells to be created
      */
-    public WorldGenerator(int width, int height) {
+    public WorldGenerator(int width, int height) throws InvalidSyntaxException {
+        if (width < 50) {
+            throw new InvalidSyntaxException("World too small");
+        }
         this.width = width;
         this.height = height;
+        ants = new ArrayList<>();
+        labelArray = new JLabel[width][height];
+        worldGrid = new JPanel(new GridLayout(width, height));
         worldCells = new Cell[width][height];
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
                 worldCells[i][j] = new Cell(i, j);
+                labelArray[i][j] = new JLabel(new ImageIcon("src/antgame/graphics/empty_cell.png"));
                 //Set perimeter as rocky
                 if (i == 0 || j == 0 || i == width - 1 || j == height - 1) {
                     worldCells[i][j].setRocky();
-
+                    labelArray[i][j] = new JLabel(new ImageIcon("src/antgame/graphics/rocky.png"));
                 }
             }
         }
@@ -52,9 +58,15 @@ public class WorldGenerator {
      *
      * @param rocky The number of cells to be generated as rocky
      */
-    public void setRocky(int rocky) {
+    public void setRocky(int rocky) throws InvalidSyntaxException {
+        if (rocky > (width * height) - (width + height)) {
+            throw new InvalidSyntaxException("Too many rocks placed");
+        }
         for (int i = 0; i < rocky; i++) {
-            worldCells[generateRandom(width - 2)][generateRandom(height - 2)].setRocky();
+            int x = generateRandom(width - 2);
+            int y = generateRandom(height - 2);
+            worldCells[x][y].setRocky();
+            labelArray[x][y].setIcon(new ImageIcon("src/antgame/graphics/rocky.png"));
         }
     }
 
@@ -63,9 +75,22 @@ public class WorldGenerator {
      *
      * @param food The number of cell that food will be generated on
      */
-    public void setNumFood(int food) {
+    public void setNumFood(int food) throws InvalidSyntaxException {
+        if (food > (width * height) - (width + height)) {
+            throw new InvalidSyntaxException("Too many rocks placed");
+        }
         for (int i = 0; i < food; i++) {
-            worldCells[generateRandom(width - 2)][generateRandom(height - 2)].set_food(generateRandom(5));
+            int x = generateRandom(width - 6);
+            int y = generateRandom(height - 6);
+            int numFood = 5;
+//            int location = generateRandom(width - 10);
+            for (int j = x; j < x + 5; j++) {
+                for (int k = j; k < j + 5; k++) {
+                    worldCells[y][j].set_food(numFood);
+                    labelArray[y][j].setIcon(new ImageIcon("src/antgame/graphics/food.png"));
+//                    location = generateRandom(width - 10);
+                }
+            }
         }
     }
 
@@ -76,12 +101,14 @@ public class WorldGenerator {
      */
     public void setRedAntHill(int redAnthill) {
         for (int i = 0; i < redAnthill; i++) {
-            int location = generateRandom(width - 7);
-            System.out.println(location);
-            for (int j = location; j < location + 5; j++) {
-                for (int k = j; k < j + 5; k++) {
+            int location = generateRandom(width - 12);
+            for (int j = location; j < location + 7; j++) {
+                for (int k = j; k < j + 7; k++) {
                     AntHill ah = new AntHill(world, worldCells[j][k], Color.RED);
+                    ants.add(ah.getA());
+                    ah.getA().setId(ants.indexOf(ah.getA()));
                     worldCells[j][k].set_anthill(ah);
+                    labelArray[j][k].setIcon(new ImageIcon("src/antgame/graphics/red_anthill.png"));
                 }
             }
         }
@@ -94,12 +121,14 @@ public class WorldGenerator {
      */
     public void setBlackAntHill(int blackAnthill) {
         for (int i = 0; i < blackAnthill; i++) {
-            int location = generateRandom(width - 7);
-            System.out.println(location);
-            for (int j = location; j < location + 5; j++) {
-                for (int k = j; k < j + 5; k++) {
+            int location = generateRandom(width - 12);
+            for (int j = location; j < location + 7; j++) {
+                for (int k = j; k < j + 7; k++) {
                     AntHill ah = new AntHill(world, worldCells[j][k], Color.BLACK);
+                    ants.add(ah.getA());
+                    ah.getA().setId(ants.indexOf(ah.getA()));
                     worldCells[j][k].set_anthill(ah);
+                    labelArray[j][k].setIcon(new ImageIcon("src/antgame/graphics/black_anthill.png"));
                 }
             }
         }
@@ -120,14 +149,12 @@ public class WorldGenerator {
 
     /**
      *
-     * @return
+     * @return the generated world
      */
     public World getWorld() {
-        world = new World(worldCells);
+        world = new World(worldCells, ants);
         return world;
     }
-    
-    
 
     /**
      * Method to display the worldCells generated
@@ -139,5 +166,35 @@ public class WorldGenerator {
             }
             System.out.println("");
         }
+    }
+
+    /**
+     *
+     * @return the array of labels tha represents the world
+     */
+    public JLabel[][] getLabelArray() {
+        return labelArray;
+    }
+
+    /**
+     *
+     * @param input a bidimensional array of JLabels representing the world
+     * @return the JPanel containing the JLabels
+     */
+    public JPanel makePanel(JLabel[][] input) {
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                worldGrid.add(labelArray[i][j]);
+            }
+        }
+        return worldGrid;
+    }
+
+    /**
+     *
+     * @return the ants in the world
+     */
+    public ArrayList<Ant> getAnts() {
+        return ants;
     }
 }

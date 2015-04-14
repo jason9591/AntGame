@@ -2,8 +2,12 @@ package antgame;
 
 import static antgame.Sense.Dir.HERE;
 import static antgame.Turn.Left_Right.LEFT;
+import java.awt.Component;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 /**
  *
@@ -12,135 +16,224 @@ import java.util.ArrayList;
 public class World {
 
 //    private int dir;
-    private ArrayList<Ant> ants = new ArrayList<>();
     Turn.Left_Right lr;
     Cell[][] world;
     ArrayList<Instruction> redBrain;
     ArrayList<Instruction> blackBrain;
+    ArrayList<Instruction> contestBrain;
+    ArrayList<Ant> ants;
+    JPanel worldGrid = new JPanel();
+    int width;
+    int height;
+    JLabel[][] arrayLabels;
+    Component[] cells;
+    int redScore;
+    int blackScore;
 
     /**
      *
-     * @param world
+     * @param world an array containing the cells of the map
+     * @param ants an ArrayList of all the ants still alive
      */
-    public World(Cell[][] world) {
+    public World(Cell[][] world, ArrayList<Ant> ants) {
         this.world = world;
+        width = world.length;
+        height = world.length;
+        this.ants = ants;
+        redBrain = new ArrayList<>();
+        blackBrain = new ArrayList<>();
+        contestBrain = new ArrayList<>();
     }
 
     /**
      *
      * @param args
      */
-    public static void main(String[] args) {
-        Cell[][] customWorld = new Cell[150][150];
-        for (int i = 0; i < 150; i++) {
-            for (int j = 0; j < 150; j++) {
-                customWorld[i][j] = new Cell(i, j);
-            }
-        }
-        World w = new World(customWorld);
-        w.printWorld();
-
-    }
-
+//    public static void main(String[] args) {
+//        Cell[][] customWorld = new Cell[150][150];
+//        for (int i = 0; i < 150; i++) {
+//            for (int j = 0; j < 150; j++) {
+//                customWorld[i][j] = new Cell(i, j);
+//            }
+//        }
+//        World w = new World(customWorld);
+//        w.printWorld();
+//
+//    }
     /**
      *
-     * @param id
+     * @param id the id of the ant executing step
      */
     public void step(int id) {
         int i;
         int st;
         int st1;
         int st2;
+        Ant a;
+        Cell p;
         if (ant_is_alive(id)) {
-            Cell p = find_ant(id);
-            Ant a = ant_at(p);
-            if (a.resting(a) > 0) {
-                a.set_resting(a, a.resting(a) - 1);
+            p = find_ant(id);
+            a = ant_at(p);
+            System.out.println("Ant Resting " + a.resting);
+            if (a.resting > 0) {
+                a.set_resting(a.resting - 1);
             } else {
-                Instruction instruction = get_instruction(a.color(a), a.state(a));
+                JLabel cell = arrayLabels[p.getX()][p.getY()];
+                Instruction instruction = get_instruction(a.color(), a.state());
                 switch (instruction.toString()) {
                     case "Sense":
+                        System.out.println("Sense");
                         Sense senseInstruction = (Sense) instruction;
                         Cond cond = senseInstruction.getCond();
                         Sense.Dir sensedir = senseInstruction.getSensedir();
-                        st = senseInstruction.getSt();
+                        st1 = senseInstruction.getSt();
                         st2 = senseInstruction.getSt2();
 
                         Cell sensedp = sensed_cell(p, a.getDirection(), sensedir);
-                        if (cell_matches(sensedp, cond, a.color)) {
-                            a.set_state(a, st);
+                        if (cell_matches(sensedp, cond, a.color())) {
+                            a.set_state(st1);
                         } else {
-                            a.set_state(a, st2);
+                            a.set_state(st2);
                         }
                         break;
                     case "Mark":
+                        System.out.println("Mark");
                         Mark markInstruction = (Mark) instruction;
                         st = markInstruction.getSt();
                         i = markInstruction.getI();
-                        set_marker_at(p, a.color(a), i);
-                        a.set_state(a, st);
+                        set_marker_at(p, a.color(), i);
+                        a.set_state(st);
                         break;
                     case "Unmark":
+                        System.out.println("Unmark");
                         Unmark unmarkInstruction = (Unmark) instruction;
                         st = unmarkInstruction.getSt();
                         i = unmarkInstruction.getI();
-                        clear_marker_at(p, a.color(a), i);
-                        a.set_state(a, st);
+                        clear_marker_at(p, a.color(), i);
+                        a.set_state(st);
                         break;
                     case "Pickup":
+                        System.out.println("Pickup");
                         PickUp pickupInstruction = (PickUp) instruction;
                         st1 = pickupInstruction.getSt1();
                         st2 = pickupInstruction.getSt2();
-                        if (a.has_food(a) || food_at(p) == 0) {
-                            a.set_state(a, st2);
+                        if (a.has_food() || food_at(p) == 0) {
+                            a.set_state(st2);
                         } else {
                             set_food_at(p, food_at(p) - 1);
-                            a.set_has_food(a, true);
-                            a.set_state(a, st1);
+                            a.set_has_food(true);
+                            a.set_state(st1);
+                            if (p.has_anthill()) {
+                                switch (p.getAntHill().getColor()) {
+                                    case RED:
+                                        redScore--;
+                                        break;
+                                    case BLACK:
+                                        blackScore--;
+                                        break;
+                                }
+                            }
+                            if (food_at(p) == 1) {
+                                cell.setIcon(new ImageIcon("src/antgame/graphics/empty_cell.png"));
+                            }
                         }
                         break;
                     case "Drop":
+                        System.out.println("Drop");
                         Drop dropInstruction = (Drop) instruction;
                         st = dropInstruction.getSt();
-                        if (a.has_food(a)) {
+                        if (a.has_food()) {
+                            if (p.getAmountOfFood() == 0) {
+                                if(p.has_anthill() && p.getAntHill().getColor() == Color.RED) {
+//                                    cell.setIcon(new ImageIcon("src/antgame/graphics/food.png"));
+                                    
+                                }
+                            }
                             set_food_at(p, food_at(p) + 1);
-                            a.set_has_food(a, true);
+                            a.set_has_food(false);
+                            if (p.has_anthill()) {
+                                switch (p.getAntHill().getColor()) {
+                                    case RED:
+                                        redScore++;
+                                        break;
+                                    case BLACK:
+                                        blackScore++;
+                                        break;
+                                }
+                            }
                         }
-                        a.set_state(a, st);
+                        a.set_state(st);
                         break;
                     case "Turn":
+                        System.out.println("Turn");
                         Turn turnInstruction = (Turn) instruction;
                         lr = turnInstruction.getLr();
                         st = turnInstruction.getSt();
-                        a.set_direction(a, turn(lr, a.getDirection()));//Conflict
-                        a.set_state(a, st);
+                        a.set_direction(turn(lr, a.getDirection()));
+                        a.set_state(st);
                         break;
                     case "Move":
+                        System.out.println("Move");
                         Move moveInstruction = (Move) instruction;
-                        st = moveInstruction.getSt();
+                        st1 = moveInstruction.getSt();
                         st2 = moveInstruction.getSt2();
-
                         Cell newp = adjacent_cell(p, a.getDirection());
-                        if (rocky(p) || some_ant_is_at(p)) {
-                            a.set_state(a, st2);
+                        JLabel newP = arrayLabels[newp.getX()][newp.getY()];
+                        if (newp.isRocky() || newp.hasAnt()) {
+                            a.set_state(st2);
                         } else {
+
                             clear_ant_at(p);
                             set_ant_at(newp, a);
-                            a.set_state(a, st);
-                            a.set_resting(a, 14);
-                            a.check_for_surrounded_ants(newp);
+                            a.setCell(newp);
+                            if (a.color() == Color.RED) {
+                                if (p.has_anthill() && p.getAntHill().getColor() == Color.RED) {
+                                    cell.setIcon(new ImageIcon("src/antgame/graphics/red_anthill.png"));
+                                } else if (p.has_anthill() && p.getAntHill().getColor() == Color.BLACK) {
+                                    cell.setIcon(new ImageIcon("src/antgame/graphics/black_anthill.png"));
+                                } else {
+                                    cell.setIcon(new ImageIcon("src/antgame/graphics/empty_cell.png"));
+                                }
+                                if (newp.has_anthill() && newp.getAntHill().getColor() == Color.BLACK) {
+                                    newP.setIcon(new ImageIcon("src/antgame/graphics/redon_black_ant.png"));
+                                } else if (newp.has_anthill() && newp.getAntHill().getColor() == Color.RED) {
+                                    newP.setIcon(new ImageIcon("src/antgame/graphics/redon_red_anthill.png"));
+                                } else {
+                                    newP.setIcon(new ImageIcon("src/antgame/graphics/redon_empty_cell.png"));
+                                }
+                            } else {
+                                if (p.has_anthill() && p.getAntHill().getColor() == Color.BLACK) {
+                                    cell.setIcon(new ImageIcon("src/antgame/graphics/black_anthill.png"));
+                                } else if (p.has_anthill() && p.getAntHill().getColor() == Color.RED) {
+                                    cell.setIcon(new ImageIcon("src/antgame/graphics/red_anthill.png"));
+                                } else {
+                                    cell.setIcon(new ImageIcon("src/antgame/graphics/empty_cell.png"));
+                                }
+                                if (newp.has_anthill() && newp.getAntHill().getColor() == Color.RED) {
+                                    newP.setIcon(new ImageIcon("src/antgame/graphics/blackon_red_anthill.png"));
+                                } else if (newp.has_anthill() && newp.getAntHill().getColor() == Color.BLACK) {
+                                    newP.setIcon(new ImageIcon("src/antgame/graphics/blackon_black_anthill.png"));
+                                } else {
+                                    newP.setIcon(new ImageIcon("src/antgame/graphics/blackon_empty_cell.png"));
+                                }
+                            }
+                            a.set_state(st1);
+                            a.set_resting(14);
+                            check_for_surrounded_ants(newp);
+                            //add label for when the ant dies
                         }
                         break;
                     case "Flip":
+                        System.out.println("Flip");
                         Flip flipInstruction = (Flip) instruction;
-                        int pp = flipInstruction.getP();
-                        st = flipInstruction.getSt();
+                        int n = flipInstruction.getP();
+                        st1 = flipInstruction.getSt();
                         st2 = flipInstruction.getSt2();
 
-                        if (pp == 0) {
-                            a.set_state(a, st);
+                        if (n == 0) {
+                            a.set_state(st1);
                         } else {
-                            a.set_state(a, st2);
+                            a.set_state(st2);
                         }
                         break;
                 }
@@ -150,14 +243,14 @@ public class World {
 
     /**
      *
-     * @param pos
-     * @param cond
-     * @param c
-     * @return
+     * @param pos the cell to be checked
+     * @param cond the condition to be checked in the cell
+     * @param c a color in case the condition needs a color
+     * @return whether the condition holds in the cell
      */
     public boolean cell_matches(Cell pos, Cond cond, Color c) {
         if (pos.isRocky()) {
-            return cond.getClass().isInstance(Rock.class);
+            return cond.toString().equals("Rock");
         } else {
             switch (cond.toString()) {
                 case "Friend":
@@ -185,15 +278,14 @@ public class World {
                     return true;
             }
         }
-
         return true;
     }
 
     /**
      *
-     * @param p
-     * @param d
-     * @return
+     * @param p the current cell
+     * @param d the direction of the adjacent cell
+     * @return the wanted adjacent cell 
      */
     public Cell adjacent_cell(Cell p, int d) {
         int currentX = p.getX();
@@ -242,11 +334,60 @@ public class World {
     }
 
     /**
+     *
+     * @param p the current cell
+     * @param c the color of the ants to spot
+     * @return the number of ants in the adjacent cells
+     */
+    public int adjacent_ants(Cell p, Color c) {
+        int n = 0;
+        for (int d = 0; d < 6; d++) {
+            Cell cel = adjacent_cell(p, d);
+            if (some_ant_is_at(cel) && (ant_at(cel)).color() == c) {
+                n++;
+            }
+        }
+        return n;
+    }
+
+    /**
+     *
+     * @param p the cell to be checked
+     */
+    public void check_for_surrounded_ant_at(Cell p) {
+        int i;
+        if (some_ant_is_at(p)) {
+            Ant a = ant_at(p);
+            if (adjacent_ants(p, a.getColor().other_color(a.getColor())) >= 5) {
+                kill_ant_at(p);
+                if (a.has_food()) {
+                    i = 1;
+                } else {
+                    i = 0;
+                }
+                set_food_at(p, food_at(p) + 3 + i);
+            }
+
+        }
+    }
+
+    /**
+     *
+     * @param p the cell to be checked
+     */
+    public void check_for_surrounded_ants(Cell p) {
+        check_for_surrounded_ant_at(p);
+        for (int d = 0; d < 6; d++) {
+            check_for_surrounded_ant_at(adjacent_cell(p, d));
+        }
+    }
+
+    /**
      * This method return a suitably adjusted direction for the ant to turn
      *
      * @param lr determine whether the ant can turn left or right
      * @param d The direction we want the ant to turn
-     * @return
+     * @return the adjusted direction
      */
     public int turn(Turn.Left_Right lr, int d) {
         int adjustedDir = -1;
@@ -262,9 +403,9 @@ public class World {
 
     /**
      *
-     * @param p
-     * @param d
-     * @param sd
+     * @param p the current cell 
+     * @param d the direction of the cell to be sensed
+     * @param sd the sense.direction of the cell to be sensed
      * @return
      */
     public Cell sensed_cell(Cell p, int d, Sense.Dir sd) {
@@ -289,7 +430,7 @@ public class World {
 
     /**
      *
-     * @param n
+     * @param n the upper limit of the range from which the random number is picked
      * @return
      */
     public int randomint(int n) {
@@ -307,8 +448,8 @@ public class World {
 
     /**
      *
-     * @param p
-     * @return
+     * @param p the cell to be checked
+     * @return whether the cell is rocky
      */
     public boolean rocky(Cell p) {
         return p.isRocky();
@@ -316,8 +457,8 @@ public class World {
 
     /**
      *
-     * @param p
-     * @return
+     * @param p the cell to be checked
+     * @return whether the cell holds an ant
      */
     public boolean some_ant_is_at(Cell p) {
         return p.hasAnt();
@@ -325,8 +466,8 @@ public class World {
 
     /**
      *
-     * @param p
-     * @return
+     * @param p the cell where the wanted ant is
+     * @return the ant on this cell 
      */
     public Ant ant_at(Cell p) {
         return p.getAnt();
@@ -334,8 +475,8 @@ public class World {
 
     /**
      *
-     * @param p
-     * @param a
+     * @param p the cell where the ant is to be set
+     * @param a the ant to be set on the cell
      */
     public void set_ant_at(Cell p, Ant a) {
         p.setAnt(a);
@@ -343,17 +484,16 @@ public class World {
 
     /**
      *
-     * @param p
+     * @param p the cell in which the ant is to be cleared
      */
     public void clear_ant_at(Cell p) {
-        ants.remove(p.getAnt());
         p.clearAnt();
     }
 
     /**
      *
-     * @param id
-     * @return
+     * @param id the id of the ant to be checked
+     * @return whether the ant with the given id is still alive
      */
     public boolean ant_is_alive(int id) {
         for (Ant a : ants) {
@@ -366,8 +506,8 @@ public class World {
 
     /**
      *
-     * @param id
-     * @return
+     * @param id the id of the ant to search
+     * @return the ant with the give id
      */
     public Cell find_ant(int id) {
         for (Ant a : ants) {
@@ -380,16 +520,18 @@ public class World {
 
     /**
      *
-     * @param p
+     * @param p the cell in which is the ant to be killed
      */
     public void kill_ant_at(Cell p) {
+        ants.remove(p.getAnt());
         clear_ant_at(p);
+        p.set_food(3);
     }
 
     /**
      *
-     * @param p
-     * @return
+     * @param p the cell to be checked
+     * @return the amount of food in the cell
      */
     public int food_at(Cell p) {
         return p.getAmountOfFood();
@@ -397,8 +539,8 @@ public class World {
 
     /**
      *
-     * @param p
-     * @param f
+     * @param p the cell where the food is to be set 
+     * @param f the amount of food to be set
      */
     public void set_food_at(Cell p, int f) {
         p.set_food(f);
@@ -406,9 +548,9 @@ public class World {
 
     /**
      *
-     * @param p
-     * @param c
-     * @return
+     * @param p the cell to be checked
+     * @param c the color of the anthill
+     * @return whether there is an anthill in the given cell
      */
     public boolean anthill_at(Cell p, Color c) {
         return p.has_anthill() && c == p.getAntHill().getColor();
@@ -416,9 +558,9 @@ public class World {
 
     /**
      *
-     * @param p
-     * @param c
-     * @param i
+     * @param p the cell where the marker is to be set
+     * @param c the color of the marker to be set
+     * @param i the type of the marker
      */
     public void set_marker_at(Cell p, Color c, int i) {
         p.set_marker_at(c, i);
@@ -426,9 +568,9 @@ public class World {
 
     /**
      *
-     * @param p
-     * @param c
-     * @param i
+     * @param p the cell where the marker is to be cleared from
+     * @param c the color of the marker to be cleared
+     * @param i the type of the marker
      */
     public void clear_marker_at(Cell p, Color c, int i) {
         p.clear_marker_at(c, i);
@@ -436,10 +578,10 @@ public class World {
 
     /**
      *
-     * @param p
-     * @param c
-     * @param i
-     * @return
+     * @param p the cell to be checked
+     * @param c the color of the marker to be checked
+     * @param i the type of the marker
+     * @return whether this marker is in the given cell
      */
     public boolean check_marker_at(Cell p, Color c, int i) {
         return p.check_marker_at(c, i);
@@ -447,9 +589,9 @@ public class World {
 
     /**
      *
-     * @param p
-     * @param c
-     * @return
+     * @param p the cell to be checked
+     * @param c the color of the markers to be checked
+     * @return whether there is any markers of this color in the given cell 
      */
     public boolean check_any_marker_at(Cell p, Color c) {
         return p.check_any_marker_at(c);
@@ -457,9 +599,9 @@ public class World {
 
     /**
      *
-     * @param color
-     * @param state
-     * @return
+     * @param color th color of the brain to be accessed
+     * @param state the state to be accessed
+     * @return the instruction at the given state
      */
     public Instruction get_instruction(Color color, int state) {
         Instruction instruction = null;
@@ -476,7 +618,7 @@ public class World {
 
     /**
      *
-     * @param redBrain
+     * @param redBrain the ArrayList of instructions to be set as the red ant brain
      */
     public void setRedBrain(ArrayList<Instruction> redBrain) {
         this.redBrain = redBrain;
@@ -484,7 +626,7 @@ public class World {
 
     /**
      *
-     * @param blackBrain
+     * @param blackBrain the ArrayList of instructions to be set as the black ant brain
      */
     public void setBlackBrain(ArrayList<Instruction> blackBrain) {
         this.blackBrain = blackBrain;
@@ -492,21 +634,109 @@ public class World {
 
     /**
      *
+     * @return the ArrayList storing all the still-alive ants
+     */
+    public ArrayList<Ant> getAnts() {
+        return ants;
+    }
+
+    /**
+     *
+     * @param worldGrid the JPanel where the world is to be displayed
+     */
+    public void setWorldGrid(JPanel worldGrid) {
+        this.worldGrid = worldGrid;
+    }
+
+    /**
+     *
+     * @return the JPanel where the world is displayed
+     */
+    public JPanel getWorldGrid() {
+        cells = worldGrid.getComponents();
+        return worldGrid;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public ArrayList<Instruction> getContestBrain() {
+        return contestBrain;
+    }
+
+    /**
+     *
+     * @param contestBrain
+     */
+    public void setContestBrain(ArrayList<Instruction> contestBrain) {
+        this.contestBrain = contestBrain;
+    }
+
+    /**
+     *
+     * @param x the x coordinate of the wanted cell
+     * @param y the y coordinate of the wanted cell
+     * @return the JLabel displaying this cell
+     */
+    public JLabel getWorldCell(int x, int y) {
+//        for (Component c: cells){
+//            System.out.println(c.toString());
+//        }
+        return (JLabel) cells[x + (y * width)];
+    }
+
+    /**
+     *
+     * @return the array of JLabels displaying the world
+     */
+    public JLabel[][] getArrayLabels() {
+        return arrayLabels;
+    }
+
+    /**
+     *
+     * @param arrayLabels the array of JLabels that is to display the world
+     */
+    public void setArrayLabels(JLabel[][] arrayLabels) {
+        this.arrayLabels = arrayLabels;
+    }
+
+    /**
+     *
      */
     public void printWorld() {
-        for (Cell[] world1 : world) {
-            for (int j = 0; j < world.length; j++) {
-                System.out.print(world1[j].toString());
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < width; j++) {
+                if (world[i][j].hasAnt()) {
+                    System.out.print("*");
+                } else {
+                    System.out.print(".");
+                }
             }
             System.out.println();
         }
     }
-    
-    public void addAnt(Ant a) {
-        ants.add(a);
+
+    /**
+     *
+     * @return the score of the red ants
+     */
+    public int getRedScore() {
+        return redScore;
+    }
+
+    /**
+     *
+     * @return the score of the black ants
+     */
+    public int getBlackScore() {
+        return blackScore;
+    }
+
+    public void setAnts(ArrayList<Ant> ants) {
+        this.ants = ants;
     }
     
-    public ArrayList<Ant> getAnts() {
-        return ants;
-    }
+    
 }

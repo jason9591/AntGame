@@ -8,15 +8,17 @@ package antgame;
  *
  */
 public class Cond {
-    public String toString(){
-        return null;
-    }
 }
 
 /**
  *
  */
 class Friend extends Cond {
+
+    /**
+     *
+     * @return a string of the type of the instruction
+     */
     @Override
     public String toString() {
         return "Friend";
@@ -27,6 +29,11 @@ class Friend extends Cond {
  *
  */
 class Foe extends Cond {
+
+    /**
+     *
+     * @return a string of the type of the instruction
+     */
     @Override
     public String toString() {
         return "Foe";
@@ -37,17 +44,26 @@ class Foe extends Cond {
  *
  */
 class FriendWithFood extends Cond {
+
+    /**
+     *
+     * @return a string of the type of the instruction
+     */
     @Override
     public String toString() {
         return "FriendWithFood";
     }
 };
 
-
 /**
  *
  */
 class FoeWithFood extends Cond {
+
+    /**
+     *
+     * @return a string of the type of the instruction
+     */
     @Override
     public String toString() {
         return "FoeWithFood";
@@ -58,6 +74,11 @@ class FoeWithFood extends Cond {
  *
  */
 class Food extends Cond {
+
+    /**
+     *
+     * @return a string of the type of the instruction
+     */
     @Override
     public String toString() {
         return "Food";
@@ -68,6 +89,11 @@ class Food extends Cond {
  *
  */
 class Rock extends Cond {
+
+    /**
+     *
+     * @return a string of the type of the instruction
+     */
     @Override
     public String toString() {
         return "Rock";
@@ -83,7 +109,7 @@ class Marker extends Cond {
 
     /**
      *
-     * @param
+     * @param i the type of the marker
      */
     public Marker(int i) {
         this.i = i;
@@ -91,12 +117,16 @@ class Marker extends Cond {
 
     /**
      *
-     * @return
+     * @return the type of the marker as an integer
      */
     public int getI() {
         return i;
     }
-    
+
+    /**
+     *
+     * @return a string of the type of the instruction
+     */
     @Override
     public String toString() {
         return "Marker";
@@ -107,6 +137,11 @@ class Marker extends Cond {
  *
  */
 class FoeMarker extends Cond {
+
+    /**
+     *
+     * @return a string of the type of the instruction
+     */
     @Override
     public String toString() {
         return "FoeMarker";
@@ -117,6 +152,11 @@ class FoeMarker extends Cond {
  *
  */
 class Home extends Cond {
+
+    /**
+     *
+     * @return a string of the type of the instruction
+     */
     @Override
     public String toString() {
         return "Home";
@@ -127,6 +167,11 @@ class Home extends Cond {
  *
  */
 class FoeHome extends Cond {
+
+    /**
+     *
+     * @return a string of the type of the instruction
+     */
     @Override
     public String toString() {
         return "FoeHome";

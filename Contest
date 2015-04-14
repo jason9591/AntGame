@@ -4,6 +4,7 @@
  */
 package antgame;
 
+import antgame.errors.InvalidSyntaxException;
 import java.util.ArrayList;
 
 /**
@@ -11,101 +12,133 @@ import java.util.ArrayList;
  * @author bps23
  */
 public class Contest {
+
     int redScore;
     int blackScore;
     int numberOfGames;
     int numberOfPlayers;
-    private AntBrain[] players;
-
-    public AntBrain[] getPlayers() {
-        return players;
-    }
-
-    public void setPlayers(AntBrain[] players) {
-        this.players = players;
-    }
+    int winner;
+    ArrayList<AntBrain> players;
     int[] wins;
     boolean isFinished;
     int nextPlayer;
     ArrayList<Game> games;
 
+    /**
+     *
+     * @param numberOfPlayers the number of players taking part in the contest
+     */
+    public Contest(int numberOfPlayers) throws InvalidSyntaxException {
+        this.numberOfPlayers = numberOfPlayers;
+        players = new ArrayList<>();
+        games = new ArrayList<>(numberOfPlayers);
+        wins = new int[numberOfPlayers];
+    }
+
+    /**
+     *
+     * @return the list of players (list of their brains)
+     */
+    public ArrayList<AntBrain> getPlayers() {
+        return players;
+    }
+
+    /**
+     *
+     * @return whether the contest is finished
+     */
     public boolean isIsFinished() {
         return isFinished;
     }
     World world;
-    
-    public Contest(int numberOfPlayers) {
-        this.numberOfPlayers = numberOfPlayers;
-        players = new AntBrain[numberOfPlayers];
-        wins = new int[numberOfPlayers];
-        setupGames(players);
-    }
-    
-    public void gameEnd() {
-        for(int win: wins) {
+
+    /**
+     * Checks whether there is a winner amongst the players and updates the
+     * winner. If not, launches a new series of games to determine one.
+     */
+    public int gameEnd() {
+        int i = 0;
+        for (int win : wins) {
             if (win > numberOfGames + 1) {
                 isFinished = true;
+                winner = wins[i];
+                return winner;
             }
-            else {
-                newSeries();
-            }
+            i++;
         }
+        return -1;
     }
-    
+
+    /**
+     *
+     * @param game the game to be launched
+     */
     public void launchNewGame(Game game) {
         World w = game.getWorld();
         AntBrain redPlayer = game.getRedPlayer();
         AntBrain blackPlayer = game.getBlackPlayer();
-        redScore = new Score(w, Color.RED).ComputeScore(w, Color.RED);
-        blackScore = new Score(w, Color.BLACK).ComputeScore(w, Color.BLACK);
-        
+        redScore = game.getScore(w, Color.RED);
+        blackScore = game.getScore(w, Color.BLACK);
+
         if (redScore > blackScore) {
             game.setWinner(game.gameWinner.REDPLAYER);
-        }
-        else if (blackScore > redScore) {
+        } else if (blackScore > redScore) {
             game.setWinner(game.gameWinner.BLACKPLAYER);
-        }      
-        else {
+        } else {
             game.setWinner(game.gameWinner.DRAW);
         }
     }
-    
+
+    /**
+     * Launches a new series of games.
+     */
     public void newSeries() {
         for (Game game : games) {
             launchNewGame(game);
-            switch(game.getWinner()) {
+            switch (game.getWinner()) {
                 case REDPLAYER:
                     for (int i = 0; i < numberOfPlayers; i++) {
-                        if (game.getRedPlayer() == players[i]) {
+                        if (game.getRedPlayer() == players.get(i)) {
                             wins[i]++;
                         }
                     }
                     break;
-                    
+
                 case BLACKPLAYER:
                     for (int i = 0; i < numberOfPlayers; i++) {
-                        if (game.getBlackPlayer() == players[i]) {
+                        if (game.getBlackPlayer() == players.get(i)) {
                             wins[i]++;
                         }
                     }
-                    break;                    
+                    break;
                 case DRAW:
                     break;
             }
         }
-        
+
         gameEnd();
     }
-    
-    public void setupGames(AntBrain[] brains) {
-        int playerNotSet = numberOfPlayers;
-        games = new ArrayList();
-        for(int i = 0; i < numberOfPlayers; i++) {
-            for (int j = playerNotSet; j > 0; j--) {
-                games.add(new Game(players[i], players[j], new WorldGenerator(150,150).getWorld()));
-                games.add(new Game(players[j], players[i], new WorldGenerator(150,150).getWorld()));
+
+    /**
+     *
+     * @param brains a list of players (list of ant brains)
+     */
+    public void setupGames(ArrayList<AntBrain> brains, World w) throws InvalidSyntaxException {
+        int playerNotSet = brains.size();
+        for (int i = 0; i < numberOfPlayers; i++) {
+            for (int j = playerNotSet - 1; j > 0; j--) {
+                games.add(new Game(players.get(i), players.get(j), w));
+                games.add(new Game(players.get(j), players.get(i), w));
             }
             playerNotSet--;
         }
+    }
+
+    public void addPlayer(AntBrain b) {
+        players.add(b);
+    }
+
+    public ArrayList<Game> getGames() {
+        return games;
     }
 }
