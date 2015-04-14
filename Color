@@ -15,8 +15,8 @@ public enum Color {
 
     /**
      *
-     * @param c
-     * @return
+     * @param c some team color  
+     * @return the opposite color
      */
     public Color other_color(Color c) {
         switch (c) {
