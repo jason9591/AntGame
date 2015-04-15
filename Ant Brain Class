@@ -16,32 +16,69 @@ public class AntBrain {
     ArrayList<Instruction> instructions;
 
     /**
-     *
+     * Condition used by the Sense instruction
      */
     public enum Condition {
 
+        /**
+         * An ant of the same color is in the cell
+         */
         FRIEND,
+        /**
+         * An ant of the opposite color is in the cell
+         */
         FOE,
+        /**
+         * An ant of the same color which holds food is in the cell
+         */
         FRIENDWITHFOOD,
+        /**
+         * An ant of the opposite color which holds food is in the cell
+         */
         FOEWITHFOOD,
+        /**
+         * There is food in the cell
+         */
         FOOD,
+        /**
+         * The cell is rocky
+         */
         ROCK,
+        /**
+         * A marker of the same color is on the cell
+         */
         MARKER,
+        /**
+         * A marker of the opposite color is in the cell
+         */
         FOEMARKER,
+        /**
+         * The cell is an anthill of the same color
+         */
         HOME,
+        /**
+         * The cell is an anthill of the opposite color
+         */
         FOEHOME
     }
 
     /**
-     *  
-     * @param instructions an ArrayList of instructions that is to be set as the brain
+     * Constructor for AntBrain objects. Initializes the ArrayList of instructions
+     * to the one passed as parameter.
+     * 
+     * @param instructions an ArrayList of instructions that is to be set as the
+     * brain
      */
     public AntBrain(ArrayList<Instruction> instructions) {
         this.instructions = instructions;
     }
 
+    /**
+     * Getter method of the instructions field
+     *
+     * @return a list of instructions
+     */
     public ArrayList<Instruction> getInstructions() {
         return instructions;
     }
-
 }
